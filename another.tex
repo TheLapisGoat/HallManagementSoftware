@@ -17,6 +17,8 @@
 \usepackage{kpfonts}
 \usepackage[T1]{fontenc}
 \input{glyphtounicode}
+\usepackage{graphicx}
+\graphicspath{{Images/}}
 
 %Redefine fancy page style to get rid of footer, header
 \fancypagestyle{plain}{%
@@ -30,7 +32,6 @@
 \pagenumbering{roman}
 
 \begin{document}
-
 \topskip0pt
 \vspace*{\fill}
 \begin{flushright}
@@ -66,14 +67,16 @@
             \hline
         \end{tabular}
     \end{center}
-
+\begin{figure}
+    \centering
+    \includegraphics[width = 10cm]{im.jpg}
+\end{figure}
 \section{\LARGE Introduction}
 \subsection{\Large Purpose}
     The purpose of this document is to present a detailed description of the Hall Management System. It will explain the purpose and features of the system, the interfaces
 of the system, what the system will do, the constraints under which it must operate and
 how the system will react to external stimuli. This document is intended for both the
-stakeholders and the developers of the system and will be proposed to the \textcolor{red}{Hall Management Centre (HMC)} for its approval.
-\subsection{\Large Document Conventions}
+stakeholders and the developers of the system and will be proposed to the  Management Centre (HMC) for its approval.
 \subsection{\Large Product Scope}
 This software system will be a Hall Management System for our institute. This system will be designed to streamline the process of everything related to the working of halls in our institute. It will serve as a portal for the students, wardens, hall clerks and the HMC Chairman to access information relevant to the respective parties.
 
@@ -111,11 +114,10 @@ but are intended for different audiences and thus use different language.
 \end{itemize}
 \subsubsection{HMC Chairman Use Cases}
 \begin{itemize}
-    \item \textbf{}
-    \item \textbf{}
-    \item \textbf{}
+    \item \textbf{Allocate Funds}
+    \item \textbf{View Overall Occupancy}
 \end{itemize}
-\subsubsection{HalL Warden Use Cases}
+\subsubsection{Hall Warden Use Cases}
 \begin{itemize}
     \item \textbf{}
     \item \textbf{}
@@ -129,8 +131,11 @@ but are intended for different audiences and thus use different language.
 \end{itemize}
 \subsection{\Large Product Functions}
 \begin{itemize}
+    \item Students can get a breakdown of their fees and pay them.
     \item Students can raise various types of complaints to the Wardens.
-    \item Hall Clerks can enter any leave taken by attendants or gardeners.
+    \item Hall Clerks can enter any leave taken by attendants or gardeners as well add petty charges to the hall budget.
+    \item Mess Managers can generate can generate a report of mess dues.
+    \item Wardens can generate of report of the hall finances.
     \item HMC Chairman can distribute the annual grant among different halls and view overall room occupancy.
     \item Hall Wardens can view their respective hall's room occupancy, enter expenditure details and view and act on complaints raised by the students.
     \item Mess Managers will handle the mess accounts of each student of the hall.
@@ -138,44 +143,15 @@ but are intended for different audiences and thus use different language.
 \subsection{\Large User Classes and Characteristics}
 \begin{itemize}
     \item The Student is expected to be Internet literate
-    \item The Hall Clerk is expected to be Internet literate
-    \item The HMC Chairman is expected to be Internet literate
-    \item The Hall Warden is expected to be Internet literate
-    \item The Mess Manager is expected to be Internet literate
+    \item The Hall Clerk is expected to be Internet literate and have basic knowledge of mathematics
+    \item The HMC Chairman is expected to be Internet literate and have basic knowledge of finance and mathematics
+    \item The Hall Warden is expected to be Internet literate and have basic knowledge of finance and mathematics
+    \item The Mess Manager is expected to be Internet literate and have basic knowledge mathematics
+    
 \end{itemize}
+\subsection{\Large Operating Environment}
+The software will operate on a Linux system, mainly consisting of a python program, running Django with an SQLite database. It will host a website, which will be accessible to the users.
 \subsection{\Large System Environment}
-\textcolor{red}{diagram?}
-
-The Hall Management System has five active actors and one cooperating system. Every user can access this system directly?
-\subsection{\Large Design and Implementation Constraints}
-\subsection{\Large User Documentation}
-\subsection{\Large Assumptions and Dependencies}
-
-\pagebreak
-
-\section{\LARGE External Interface Requirements}
-\subsection{\Large User Interfaces}
-\subsection{\Large Hardware Interfaces}
-\subsection{\Large Software Interfaces}
-\subsection{\Large Communications Interfaces}
-
-\section{\LARGE System Features}
-\subsection{\Large System Feature 1}
-\subsection{\Large System Feature 2 (and so on)}
-
-\pagebreak
-
-\section{\LARGE Other Nonfunctional Requirements}
-\subsection{\Large Performance Requirements}
-\subsection{\Large Safety Requirements}
-\subsection{\Large Security Requirements}
-\subsection{\Large Software Quality Attributes}
-\subsection{\Large Business Rules}
-
-\section{\LARGE Other Requirements}
-
-\section*{\LARGE Appendix A: Glossary}
-\section*{\LARGE Appendix B: Analysis Models}
-\section*{\LARGE Appendix C: To Be Determined List}
+The Hall Management System has five active actors and one cooperating system. Every user can access this system directly via the website
 
 \end{document}
