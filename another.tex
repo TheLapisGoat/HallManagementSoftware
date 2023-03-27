@@ -1,0 +1,181 @@
+\documentclass[letterpaper,12pt]{article}
+\usepackage{xcolor}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage[top = 40pt, left = 1in, right = 1in, headheight = 1cm, headsep = 15pt]{geometry}
+\usepackage{titlesec}
+\titlelabel{\thetitle.\quad}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{calc}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{kpfonts}
+\usepackage[T1]{fontenc}
+\input{glyphtounicode}
+
+%Redefine fancy page style to get rid of footer, header
+\fancypagestyle{plain}{%
+\fancyhf{}% clear all header and footer fields
+}
+\fancyhf{}% Clear all headers/footers
+\fancyhead[L]{\textbf{\textit{Software Requirements Specification for HMS}}}
+\fancyhead[R]{\textbf{\textit{Page \thepage}}}
+\thispagestyle{plain}
+\pagestyle{fancy}
+\pagenumbering{roman}
+
+\begin{document}
+
+\topskip0pt
+\vspace*{\fill}
+\begin{flushright}
+    \textbf{
+        \Huge{Software Requirements \\ Specification} \\ \vspace{30pt} 
+        \LARGE{for} \\ \vspace{30pt}
+        \Huge{Hall Management System} \\ \vspace{30pt}
+        \Large{Version 1.0} \\ \vspace{30pt}
+        \Large{Prepared by}
+    } \\ \vspace{10pt}
+    \large{Tanishq Prasad \\ Sourodeep Datta \\ Krish Khimasia} \\ \vspace{30pt}
+    \textbf{
+        \Large{Sorrow, Indian Institute of Technology Kharagpur} \\ \vspace{30pt}
+        \large{21/03/2023}
+    }
+\end{flushright}
+\vspace*{\fill}
+\pagebreak
+
+\renewcommand*\contentsname{\Huge Table of Contents}
+\small\tableofcontents
+\pagebreak
+
+\section*{\LARGE Revision History}
+    \begin{center}
+        \begin{tabular}{| p{2cm} | p{2cm} | p{5cm} | p{2cm} |}
+            \hline			
+            \textbf{Name} & \textbf{Date} & \textbf{Reason For Changes} & \textbf{Version} \\
+            \hline \hline
+            A & B & C & D \\
+            \hline
+            E & F & G & H \\
+            \hline
+        \end{tabular}
+    \end{center}
+
+\section{\LARGE Introduction}
+\subsection{\Large Purpose}
+    The purpose of this document is to present a detailed description of the Hall Management System. It will explain the purpose and features of the system, the interfaces
+of the system, what the system will do, the constraints under which it must operate and
+how the system will react to external stimuli. This document is intended for both the
+stakeholders and the developers of the system and will be proposed to the \textcolor{red}{Hall Management Centre (HMC)} for its approval.
+\subsection{\Large Document Conventions}
+\subsection{\Large Product Scope}
+This software system will be a Hall Management System for our institute. This system will be designed to streamline the process of everything related to the working of halls in our institute. It will serve as a portal for the students, wardens, hall clerks and the HMC Chairman to access information relevant to the respective parties.
+
+More specifically, this system is designed to facilitate communication between the different entities such as students and wardens, which would ensure smoother running of the halls and provide an organised way to handle expenses and allocations.
+
+\subsection{\Large References}
+IEEE. \emph{IEEE Std 830-1998 IEEE Recommended Practice for Software Requirements
+Specifications.} IEEE Computer Society, 1998.
+
+\textcolor{red}{also add the sample provided as reference?}
+\subsection{\Large Overview of Document}
+The next chapter, the Overall Description section, of this document gives an
+overview of the functionality of the product. It describes the informal requirements and is
+used to establish a context for the technical requirements specification in the next chapter.
+
+The third chapter, Requirements Specification section, of this document is written
+primarily for the developers and describes in technical terms the details of the
+functionality of the product.
+
+Both sections of the document describe the same software product in its entirety,
+but are intended for different audiences and thus use different language.
+\section{\LARGE Overall Description}
+\subsection{\Large Use Cases (Don't know if right place}
+\subsubsection{Student Use Cases}
+\begin{itemize}
+    \item \textbf{Hall Assignment & Room Allotment}
+    \item \textbf{Get Fees}
+    \item \textbf{File a complaint}
+\end{itemize}
+\subsubsection{Hall Clerk Use Cases}
+\begin{itemize}
+    \item \textbf{}
+    \item \textbf{}
+    \item \textbf{}
+\end{itemize}
+\subsubsection{HMC Chairman Use Cases}
+\begin{itemize}
+    \item \textbf{}
+    \item \textbf{}
+    \item \textbf{}
+\end{itemize}
+\subsubsection{HalL Warden Use Cases}
+\begin{itemize}
+    \item \textbf{}
+    \item \textbf{}
+    \item \textbf{}
+\end{itemize}
+\subsubsection{Mess Manager Use Cases}
+\begin{itemize}
+    \item \textbf{}
+    \item \textbf{}
+    \item \textbf{}
+\end{itemize}
+\subsection{\Large Product Functions}
+\begin{itemize}
+    \item Students can raise various types of complaints to the Wardens.
+    \item Hall Clerks can enter any leave taken by attendants or gardeners.
+    \item HMC Chairman can distribute the annual grant among different halls and view overall room occupancy.
+    \item Hall Wardens can view their respective hall's room occupancy, enter expenditure details and view and act on complaints raised by the students.
+    \item Mess Managers will handle the mess accounts of each student of the hall.
+\end{itemize}
+\subsection{\Large User Classes and Characteristics}
+\begin{itemize}
+    \item The Student is expected to be Internet literate
+    \item The Hall Clerk is expected to be Internet literate
+    \item The HMC Chairman is expected to be Internet literate
+    \item The Hall Warden is expected to be Internet literate
+    \item The Mess Manager is expected to be Internet literate
+\end{itemize}
+\subsection{\Large System Environment}
+\textcolor{red}{diagram?}
+
+The Hall Management System has five active actors and one cooperating system. Every user can access this system directly?
+\subsection{\Large Design and Implementation Constraints}
+\subsection{\Large User Documentation}
+\subsection{\Large Assumptions and Dependencies}
+
+\pagebreak
+
+\section{\LARGE External Interface Requirements}
+\subsection{\Large User Interfaces}
+\subsection{\Large Hardware Interfaces}
+\subsection{\Large Software Interfaces}
+\subsection{\Large Communications Interfaces}
+
+\section{\LARGE System Features}
+\subsection{\Large System Feature 1}
+\subsection{\Large System Feature 2 (and so on)}
+
+\pagebreak
+
+\section{\LARGE Other Nonfunctional Requirements}
+\subsection{\Large Performance Requirements}
+\subsection{\Large Safety Requirements}
+\subsection{\Large Security Requirements}
+\subsection{\Large Software Quality Attributes}
+\subsection{\Large Business Rules}
+
+\section{\LARGE Other Requirements}
+
+\section*{\LARGE Appendix A: Glossary}
+\section*{\LARGE Appendix B: Analysis Models}
+\section*{\LARGE Appendix C: To Be Determined List}
+
+\end{document}
