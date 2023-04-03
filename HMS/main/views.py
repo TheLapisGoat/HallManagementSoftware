@@ -11,6 +11,8 @@ def index(request):
     return render(request, f'index-{role}.html')
 
 def loginUser(request):
+    if request.user.is_authenticated:
+        return redirect('index')
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
