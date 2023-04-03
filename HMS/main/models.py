@@ -55,17 +55,6 @@ class ATR(models.Model):
         self.save()
 
 
-class Allocation(models.Model):     # change allocation-hallbudget relation to aggregation
-    name = models.CharField(max_length = 100)
-    allocated_grant = models.FloatField()
-
-    def __str__(self):
-        return self.name
-    
-    def change_value(self, value):
-        self.allocated_grant = value
-        self.save()
-
 class Expense(models.Model):        # change expense-hallbudget relation to aggregation
     name = models.CharField(max_length = 100)
     cost = models.FloatField()
@@ -81,7 +70,7 @@ class HallBudget(models.Model):
     hall = models.OneToOneField(Hall, on_delete = models.CASCADE, related_name = "hallBudget")
     expenses = models.ForeignKey(Expense, on_delete=models.PROTECT)     # PROTECT raises ProtectedError when Expense object is deleted
     pettyexpenses = models.ForeignKey(Expense, on_delete=models.PROTECT)
-    allocations = models.ForeignKey(Allocation, on_delete=models.PROTECT)
+    # allocations = models.ForeignKey(Allocation, on_delete=models.PROTECT)
     #hallPhoto = models.ImageField()
     
     def __str__(self):
@@ -95,7 +84,19 @@ class HallBudget(models.Model):
     
     def get_allocations(self):
         return self.allocations
+
+class Allocation(models.Model):     # change allocation-hallbudget relation to aggregation
+    hall_budget= models.ForeignKey(HallBudget, on_delete = models.CASCADE, related_name = "allocations")
+    name = models.CharField(max_length = 100)
+    allocated_grant = models.FloatField()
+
+    def __str__(self):
+        return self.name
     
+    def change_value(self, value):
+        self.allocated_grant = value
+        self.save()
+
 class Room(models.Model):
     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "rooms")
     roomNumber = models.CharField(max_length = 100)
