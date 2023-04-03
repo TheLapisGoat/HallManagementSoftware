@@ -5,12 +5,47 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE, related_name = "profile")
     
+    
     address = models.TextField()
     telephoneNumber = models.IntegerField()
     #photograph = models.ImageField()
     
     def __str__(self):
         return self.user.username
+    
+class Hall(models.Model):
+    name = models.CharField(max_length = 100)
+    total_rooms  = models.IntegerField()
+    
+    # messManager = models.OneToOneField(MessManager, on_delete = models.CASCADE, related_name = "messManager")
+    #not in the class diagram and changed it locally
+    # warden = models.OneToOneField(Warden, on_delete = models.CASCADE, related_name = "warden")
+    # expenditure = models.OneToOneField(HallBudget, on_delete = models.CASCADE, related_name = "expenditure")
+    
+class ComplaintRegister(models.Model):
+    hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "complaintRegister")
+    
+    
+class Complaint(models.Model):
+    ComplaintRegister = models.ForeignKey(ComplaintRegister, on_delete = models.CASCADE, related_name = "complaints")
+    details = models.CharField()
+    date = models.DateField()
+    nameagainst = models.CharField()
+    #image = models.ImageField()
+    status = models.CharField(max_length = 100)
+
+class ATR(models.Model):
+    name = models.CharField(max_length = 100)
+    details = models.CharField()
+    complaint = models.ForeignKey(Complaint, on_delete = models.CASCADE, related_name = "ATR")
+    
+    def __str__(self):
+        return self.title
+    
+    def change_status(self, status):
+        self.status = status
+        self.save()
+
 
 class Allocation(models.Model):     # change allocation-hallbudget relation to aggregation
     name = models.CharField(max_length = 100)
