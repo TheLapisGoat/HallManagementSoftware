@@ -1,0 +1,51 @@
+/* Set the background color of the page */
+body {
+  background-color: #f2f2f2;
+}
+
+/* Center the welcome message */
+p {
+  text-align: center;
+  font-size: 24px;
+  margin-top: 50px;
+}
+
+/* Style the form */
+form {
+  width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the form input fields */
+input[type="text"], input[type="password"] {
+  box-sizing: border-box; /* Add this line to include padding and border in element's total width */
+  display: block;
+  width: 100%;
+  height: 40px; /* Set a fixed height to prevent overflow */
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Style the form submit button */
+input[type="submit"] {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Style the error messages */
+div {
+  color: #f00;
+  margin-top: 10px;
+}
