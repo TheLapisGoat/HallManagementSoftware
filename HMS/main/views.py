@@ -5,10 +5,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 # Create your views here.
-@login_required
+@login_required(login_url = "main-login")
 def index(request):
-    temp = request.user.profile.address
-    return render(request, 'index.html', {"address": temp})
+    return render(request, 'index.html')
 
 def loginUser(request):
     if request.method == 'POST':
