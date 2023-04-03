@@ -7,6 +7,7 @@ from django.contrib import messages
 # Create your views here.
 @login_required(login_url = "main-login")
 def index(request):
+    role = request.user.role
     return render(request, 'index.html')
 
 def loginUser(request):

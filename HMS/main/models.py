@@ -3,7 +3,18 @@ from django.contrib.auth.models import User, AbstractUser, PermissionsMixin
 # Create your models here.
 
 class Person(AbstractUser, PermissionsMixin):
-        
+    
+    ROLES = [
+        ('student', 'Student'),
+        ('warden', 'Warden'),
+        ('hall_clerk', 'Hall Clerk'),
+        ('hmc_chairman', 'HMC Chairman'),
+        ('mess_manager', 'Mess Manager'),
+        ('admin', 'Administrator')
+    ]
+    
+    role = models.CharField( "Role", max_length=40, choices=ROLES, default='student')
+
     class Meta:
         verbose_name = "Person"
         verbose_name_plural = "Persons"
@@ -11,7 +22,7 @@ class Person(AbstractUser, PermissionsMixin):
     telephoneNumber = models.IntegerField("TelephoneNumber")
     #photograph = models.ImageField("Photo")
 
-    REQUIRED_FIELDS = ["email", "address", "telephoneNumber"]
+    REQUIRED_FIELDS = ["email", "address", "telephoneNumber", "role"]
     
 class Student(models.Model):
     person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "student", primary_key = True)
