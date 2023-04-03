@@ -18,6 +18,7 @@ class Person(AbstractUser, PermissionsMixin):
     class Meta:
         verbose_name = "Person"
         verbose_name_plural = "Persons"
+        
     address = models.TextField("Address")
     telephoneNumber = models.IntegerField("TelephoneNumber")
     #photograph = models.ImageField("Photo")

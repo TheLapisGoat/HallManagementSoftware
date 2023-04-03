@@ -8,7 +8,7 @@ from django.contrib import messages
 @login_required(login_url = "main-login")
 def index(request):
     role = request.user.role
-    return render(request, 'index.html')
+    return render(request, f'index-{role}.html')
 
 def loginUser(request):
     if request.method == 'POST':
