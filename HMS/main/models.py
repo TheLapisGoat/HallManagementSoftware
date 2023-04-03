@@ -36,15 +36,15 @@ class ComplaintRegister(models.Model):
     
 class Complaint(models.Model):
     ComplaintRegister = models.ForeignKey(ComplaintRegister, on_delete = models.CASCADE, related_name = "complaints")
-    details = models.CharField()
+    details = models.TextField()
     date = models.DateField()
-    nameagainst = models.CharField()
+    nameagainst = models.CharField(max_length = 100)
     #image = models.ImageField()
     status = models.CharField(max_length = 100)
 
 class ATR(models.Model):
     name = models.CharField(max_length = 100)
-    details = models.CharField()
+    details = models.TextField()
     complaint = models.ForeignKey(Complaint, on_delete = models.CASCADE, related_name = "ATR")
     
     def __str__(self):
