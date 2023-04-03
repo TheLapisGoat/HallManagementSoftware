@@ -12,7 +12,7 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-class Allocation(models.Model):
+class Allocation(models.Model):     # change allocation-hallbudget relation to aggregation
     name = models.CharField(max_length = 100)
     allocated_grant = models.FloatField()
 
@@ -23,7 +23,7 @@ class Allocation(models.Model):
         self.allocated_grant = value
         self.save()
 
-class Expense(models.Model):
+class Expense(models.Model):        # change expense-hallbudget relation to aggregation
     name = models.CharField(max_length = 100)
     cost = models.FloatField()
     
@@ -52,3 +52,37 @@ class HallBudget(models.Model):
     
     def get_allocations(self):
         return self.allocations
+    
+class Room(models.Model):
+    hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "rooms")
+    roomNumber = models.CharField(max_length = 100)
+    rent = models.FloatField()
+    
+    def __str__(self):
+        return self.roomNumber
+    
+    def get_rent(self):
+        return self.rent
+    
+    class Meta:
+        abstract = True
+    
+class AmenityRoom(Room):
+    hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "amenityRooms")
+    amenity_name = models.CharField(max_length = 100)
+
+    def get_amenity_name(self):
+        return self.amenity_name
+    
+class BoarderRoom(Room):
+    hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "boarderRooms")
+    occupancyNumber = models.IntegerField()
+    # boarders?
+    newstatus = models.BooleanField(default = False)
+    currentnoStudents = models.IntegerField(default = 0)
+    
+    def __str__(self):
+        return self.roomNumber
+    
+    def get_occupancy_number(self):
+        return self.occupancyNumber
