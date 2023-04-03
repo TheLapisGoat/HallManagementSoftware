@@ -3,7 +3,7 @@ from django.contrib.auth.models import User, AbstractUser, PermissionsMixin
 # Create your models here.
 
 class Person(AbstractUser, PermissionsMixin):
-    
+        
     class Meta:
         verbose_name = "Person"
         verbose_name_plural = "Persons"
@@ -54,22 +54,10 @@ class ATR(models.Model):
         self.status = status
         self.save()
 
-
-class Expense(models.Model):        # change expense-hallbudget relation to aggregation
-    name = models.CharField(max_length = 100)
-    cost = models.FloatField()
-    
-    def __str__(self):
-        return self.name
-   
-    def change_value(self, value):
-        self.cost = value
-        self.save()
-
+        
 class HallBudget(models.Model):
     hall = models.OneToOneField(Hall, on_delete = models.CASCADE, related_name = "hallBudget")
-    expenses = models.ForeignKey(Expense, on_delete=models.PROTECT)     # PROTECT raises ProtectedError when Expense object is deleted
-    pettyexpenses = models.ForeignKey(Expense, on_delete=models.PROTECT)
+    # pettyexpenses = models.ForeignKey(Expense, on_delete=models.PROTECT)
     # allocations = models.ForeignKey(Allocation, on_delete=models.PROTECT)
     #hallPhoto = models.ImageField()
     
@@ -77,13 +65,36 @@ class HallBudget(models.Model):
         return self.allocations #dont know what to return here
     
     def get_total(self):
-        return - self.expenses - self.pettyexpenses + self.allocations
+        return -self.expenses +self.allocations
     
     def get_petty_expenses(self):
         return self.pettyexpenses
     
     def get_allocations(self):
         return self.allocations
+
+class Expense(models.Model):        # change expense-hallbudget relation to aggregation
+    name = models.CharField(max_length = 100)
+    cost = models.FloatField()
+    hallbudget = models.ForeignKey(HallBudget, on_delete=models.CASCADE, related_name = "expenses") 
+    def __str__(self):
+        return self.name
+   
+    def change_value(self, value):
+        self.cost = value
+        self.save()
+        
+class PettyExpense(models.Model):        # change expense-hallbudget relation to aggregation
+    name = models.CharField(max_length = 100)
+    cost = models.FloatField()
+    hallbudget = models.ForeignKey(HallBudget, on_delete=models.CASCADE, related_name = "pettyexpenses") 
+    def __str__(self):
+        return self.name
+   
+    def change_value(self, value):
+        self.cost = value
+        self.save()
+        
 
 class Allocation(models.Model):     # change allocation-hallbudget relation to aggregation
     hall_budget= models.ForeignKey(HallBudget, on_delete = models.CASCADE, related_name = "allocations")
