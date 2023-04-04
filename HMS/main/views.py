@@ -4,8 +4,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-from .models import Student, Person
+from .models import Student, Person, Hall
 from .forms import StudentAdmissionForm
+
+def getFreeRoom():
+    halls = Hall.objects.all()
+    for hall in halls:
+        if hall.getCurrentOccupancy() < hall.getMaxOccupancy():
+            rooms = hall.boarderRooms.all()
+            for room in rooms:
+                if room.currentOccupancy < room.maxOccupancy:
+                    return room
+    return None
 # Create your views here.
 @login_required(login_url = "main-login")
 def index(request):
@@ -22,11 +32,19 @@ def admissionIndex(request):
 
 @login_required(login_url = "main-login")
 def newAdmission(request):
+    
     if request.user.role != "admission":
         return redirect("index")
+    
     if request.method == 'POST':
         form = StudentAdmissionForm(request.POST)
         if form.is_valid():
+            
+            room = getFreeRoom()
+            if room is None:
+                form.add_error(field = None, error = "Error! There is no space left in the institute")
+                return render(request, 'student_admission.html', {'form': form})
+            
             person = Person.objects.create_user(
                 username = form.cleaned_data['username'],
                 password = form.cleaned_data['password'],
@@ -36,17 +54,19 @@ def newAdmission(request):
                 address = form.cleaned_data['address'],
                 telephoneNumber = form.cleaned_data['telephoneNumber'],
             )
-            # create a new Student object associated with the Person object
+            
             student = Student.objects.create(
                 person = person,
-                rollNumber = "sad",
+                rollNumber = form.cleaned_data['rollNumber'],
+                hall = room.hall,
+                room = room
             )
-            return HttpResponse("Hemlo")
+            return redirect("admission-index")
         else:
-            return HttpResponse("SadLyf")
+            return render(request, 'student_admission.html', {'form': form})
     else:
         form = StudentAdmissionForm()
-    return render(request, 'student_admission.html', {'form': form})
+        return render(request, 'student_admission.html', {'form': form})
     
 
 def loginUser(request):
@@ -66,7 +86,8 @@ def loginUser(request):
             form = AuthenticationForm(request.POST)
             return render(request, 'login.html', {'form': form})
         
+@login_required(login_url = "main-login")
 def logoutUser(request):
     logout(request)
-    messages.success(request, "You need some milk")
+    messages.success(request, "Successfully Logged Out")
     return redirect("main-login")
