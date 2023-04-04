@@ -5,7 +5,19 @@
 </head>
 <body>
 	<h1>Welcome to the Custom Admin Index</h1>
-	<p>This is a custom index page for the Django admin site.</p>
-	<p>You can modify this page to include any additional information or functionality that you need.</p>
+	<div class="app-student">
+		<h2>Students</h2>
+		<ul>
+		  {% for student in students %}
+			<li>
+			  <a href="{% url 'admin:main_student_change' student.id %}">
+				{{ student.rollNumber }}
+			  </a>
+			</li>
+		  {% empty %}
+			<li>No students found.</li>
+		  {% endfor %}
+		</ul>
+	  </div>
 </body>
 </html>

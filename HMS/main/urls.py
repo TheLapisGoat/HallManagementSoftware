@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from . import views
-from .admin import custom_admin_site
+from .admin import hmc_admin
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -9,5 +9,7 @@ urlpatterns = [
     path("", views.index, name = "index"),
     path("login/", views.loginUser, name="main-login"),
     path("logout/", views.logoutUser, name = "main-logout"),
-    path("custom-admin/", custom_admin_site.urls, name = "main-customadmin"),
+    path("hmcadmin", hmc_admin.urls),
+    path("admission/", views.admissionIndex, name = "admission-index"),
+    path("admission/new_admission", views.newAdmission, name = "newadmission"),
 ]
