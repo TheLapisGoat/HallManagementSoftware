@@ -11,5 +11,7 @@ urlpatterns = [
     path("logout/", views.logoutUser, name = "main-logout"),
     path("hmcadmin", hmc_admin.urls),
     path("admission/", views.admissionIndex, name = "admission-index"),
-    path("admission/new_admission", views.newAdmission, name = "newadmission"),
+    path("admission/new_admission/", views.newAdmission, name = "newadmission"),
+    path("messmanager/", views.messManagerIndex, name = "messmanager-index"),
+    path("messmanager/manage_accounts/", views.manageMessAccounts, name = "manage-mess-accounts"),
 ]

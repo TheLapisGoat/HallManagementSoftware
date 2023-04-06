@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import Person, Student
+from .models import Person, MessAccount
+from django.core.validators import MinValueValidator
 
 class PersonCreationForm(UserCreationForm):
     address = forms.CharField(max_length=255, required=True)
@@ -40,5 +41,23 @@ class StudentAdmissionForm(forms.Form):
             self.add_error('confirm_password', "Password does not match")
 
         return cleaned_data
-        
     
+# class MessAccountForm(forms.ModelForm):
+#     class Meta:
+#         model = MessAccount
+#         fields = ['student', 'month', 'dues', 'paid']
+
+#     def __init__(self, *args, **kwargs):
+#         super(MessAccountForm, self).__init__(*args, **kwargs)
+#         self.fields['student'].disabled = True
+#         self.fields['month'].widget.attrs['readonly'] = True
+
+class MessUpdateForm(forms.ModelForm):
+    
+    due = forms.DecimalField(label='Due Amount',required=True, validators=[MinValueValidator(0)], decimal_places = 2, max_digits = 8)
+    
+    class Meta:
+        model = MessAccount
+        fields = ['due']
+        
+MessAccountFormSet = forms.modelformset_factory(model = MessAccount, form = MessUpdateForm, fields=('due',), extra = 0)
