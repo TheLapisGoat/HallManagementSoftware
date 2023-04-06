@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
+from datetime import date
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-from .models import Student, Person, Hall
-from .forms import StudentAdmissionForm
+from .models import Student, Person, Hall, MessAccount, MessAccountHistory
+from .forms import StudentAdmissionForm, MessAccountFormSet
 
 def getFreeRoom():
     halls = Hall.objects.all()
@@ -28,6 +29,8 @@ def index(request):
         rent = request.user.student.room.rent
         context = {'room': roomNumber, 'hall': hall, 'rent': rent}
         return render(request, "index-student.html",context )
+    elif role == "mess_manager":
+        return redirect("messmanager-index")
     else:
         return HttpResponse("Damn Boi")
 
@@ -74,6 +77,44 @@ def newAdmission(request):
     else:
         form = StudentAdmissionForm()
         return render(request, 'student_admission.html', {'form': form})
+
+@login_required(login_url = "main-login")
+def messManagerIndex(request):
+    if request.user.role != "mess_manager":
+        return redirect("index")
+    return render(request, 'index-messmanager.html')
+
+@login_required(login_url = "main-login")
+def manageMessAccounts(request):
+    if request.user.role != "mess_manager":
+        return redirect("index")
+    
+    hall = request.user.mess_manager.hall
+    students = Student.objects.filter(hall = hall)
+    current_date = date.today()
+    
+    for student in students:
+        mess_account = student.messAccount
+        if current_date.month != mess_account.last_update.month or current_date.year != mess_account.last_update.year:
+            MessAccountHistory.objects.create(mess_account = mess_account, last_update = mess_account.last_update, due = mess_account.due)
+            mess_account.last_update = current_date
+            mess_account.due = 0
+            mess_account.save()
+    
+    if request.method == "POST":
+        formset = MessAccountFormSet(request.POST)
+        if formset.is_valid():
+            formset.save()
+            messages.success(request, 'Mess accounts updated successfully')
+            return render(request, 'update-mess-accounts.html', {'formset': formset})
+        else:
+            return render(request, 'update-mess-accounts.html', {'formset': formset})
+    else:
+        mess_accounts = MessAccount.objects.filter(student__in=students).distinct()
+        formset = MessAccountFormSet(queryset=mess_accounts)
+        
+    return render(request, 'update-mess-accounts.html', {"formset": formset})
+        
     
 
 def loginUser(request):

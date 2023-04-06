@@ -26,7 +26,7 @@ class Person(AbstractUser, PermissionsMixin):
     #photograph = models.ImageField("Photo")
 
     REQUIRED_FIELDS = ["email", "address", "telephoneNumber", "role", "first_name", "last_name"]
-
+    
 class Hall(models.Model):
     name = models.CharField("Name", max_length = 100, blank = False, primary_key = True)
     total_rooms  = models.IntegerField("Total Rooms", default = 0)
@@ -49,9 +49,18 @@ class Hall(models.Model):
         else:
             self.total_rooms = self.boarderRooms.count()
             super(Hall, self).save(*args, **kwargs)
-        
-    #messManager = models.OneToOneField(MessManager, on_delete = models.CASCADE, related_name = "messManager")
-    #not in the class diagram and changed it locally
+            
+class MessManager(models.Model):
+    person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "mess_manager", primary_key = True, blank = False, unique = True)
+    hall = models.OneToOneField(Hall, on_delete = models.PROTECT, related_name = "mess_maanger", blank = False, unique = True)
+    
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            super(MessManager, self).save(*args, **kwargs)
+            self.person.role = 'mess_manager'
+        else:
+            self.person.role = 'mess_manager'
+            super(MessManager, self).save(*args, **kwargs)
     # warden = models.OneToOneField(Warden, on_delete = models.CASCADE, related_name = "warden")
     # expenditure = models.OneToOneField(HallBudget, on_delete = models.CASCADE, related_name = "expenditure")
 
@@ -130,6 +139,14 @@ class Student(models.Model):
 class MessAccount(models.Model):
     student = models.OneToOneField(Student, on_delete = models.CASCADE, related_name = "messAccount", blank = False, primary_key = True, unique = True)
     due = models.DecimalField("Mess Due", blank = False, default = 0, max_digits = 8, decimal_places = 2)
+    paid = models.DecimalField("Paid", blank = False, default = 0, max_digits = 8, decimal_places = 2)
+    last_update = models.DateField("Last Update Date", auto_now_add = True)
+    
+class MessAccountHistory(models.Model):
+    mess_account = models.ForeignKey(MessAccount, on_delete=models.CASCADE, blank = False, related_name = "mess_account_history")
+    last_update = models.DateField("Last Updated Date", blank = False)
+    due = models.DecimalField("Mess Due", blank = False, default = 0, max_digits = 8, decimal_places = 2)
+    
             
 # class ComplaintRegister(models.Model):
 #     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "complaintRegister")
