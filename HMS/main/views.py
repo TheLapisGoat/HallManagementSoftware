@@ -6,6 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from .models import Student, Person, Hall
 from .forms import StudentAdmissionForm
+from django.db.models import Sum
 
 def getFreeRoom():
     halls = Hall.objects.all()
@@ -26,7 +27,8 @@ def index(request):
         hall = request.user.student.hall.name
         roomNumber = request.user.student.room.roomNumber
         rent = request.user.student.room.rent
-        context = {'room': roomNumber, 'hall': hall, 'rent': rent}
+        sum_amenity = request.user.student.hall.amenityRooms.aggregate(Sum('rent'))['rent__sum']
+        context = {'room': roomNumber, 'hall': hall, 'rent': rent, 'sum_amenity': sum_amenity}
         return render(request, "index-student.html",context )
     else:
         return HttpResponse("Damn Boi")
