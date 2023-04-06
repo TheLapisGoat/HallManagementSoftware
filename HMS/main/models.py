@@ -30,10 +30,7 @@ class Person(AbstractUser, PermissionsMixin):
 class Hall(models.Model):
     name = models.CharField("Name", max_length = 100, blank = False, primary_key = True)
     total_rooms  = models.IntegerField("Total Rooms", default = 0)
-    
-    def save(self, *args, **kwargs):
-        self.total_rooms = self.boarderRooms.count()
-        super(Hall, self).save(*args, **kwargs)
+    total_amenityrooms  = models.IntegerField("Total Amenity Rooms", default = 0)
         
     def getCurrentOccupancy(self):
         return self.boarderRooms.aggregate(total = Sum('currentOccupancy'))['total']
@@ -45,9 +42,11 @@ class Hall(models.Model):
         if self.pk is None:
             super(Hall, self).save(*args, **kwargs)
             self.total_rooms = self.boarderRooms.count()
+            self.total_amenityrooms = self.amenityRooms.count()
             self.save()
         else:
             self.total_rooms = self.boarderRooms.count()
+            self.total_amenityrooms = self.amenityRooms.count()
             super(Hall, self).save(*args, **kwargs)
         
     #messManager = models.OneToOneField(MessManager, on_delete = models.CASCADE, related_name = "messManager")
@@ -66,12 +65,21 @@ class Room(models.Model):
         abstract = True
         
 
-# class AmenityRoom(Room):
-#     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "amenityRoom", blank = False)
-#     name = models.CharField("Name", max_length = 100, blank = False)
+class AmenityRoom(Room):
+    hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "amenityRooms", blank = False)
+    name = models.CharField("Name", max_length = 100, blank = False)
+        
+    def __str__(self):
+        return self.name
     
-#     def __str__(self):
-#         return self.name
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            super(AmenityRoom, self).save(*args, **kwargs)
+            self.save()
+            self.hall.save()
+        else:
+            super(AmenityRoom, self).save(*args, **kwargs)
+            self.hall.save()
 
 class BoarderRoom(Room):
     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "boarderRooms", blank = False)

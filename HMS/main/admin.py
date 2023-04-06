@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Person, Student, Hall, BoarderRoom
+from .models import Person, Student, Hall, BoarderRoom, AmenityRoom
 # Register your models here.
 
 from django.contrib.auth.admin import UserAdmin
@@ -45,6 +45,9 @@ class StudentAdmin(ModelAdmin):
 class BoarderRoomInLine(admin.TabularInline):
     model = BoarderRoom
     readonly_fields = ('currentOccupancy',)
+
+class AmenityRoomInLine(admin.TabularInline):
+    model = AmenityRoom
     
 class BoarderRoomAdmin(ModelAdmin):
     model = BoarderRoom
@@ -55,24 +58,33 @@ class BoarderRoomAdmin(ModelAdmin):
     name.short_description = "Hall Name"
     
     list_display = ('name', 'roomNumber', 'rent', 'currentOccupancy', 'maxOccupancy', 'newstatus')
+
+class AmenityRoomAdmin(ModelAdmin):
+    model = AmenityRoom
+    
+    def name(self, obj):
+        return obj.hall.name
+    name.short_description = "Hall Name"
+    list_display = ('name', 'roomNumber', 'rent',)  
     
 class HallAdmin(ModelAdmin):
     model = Hall
-    inlines = [BoarderRoomInLine]
-    readonly_fields = ('total_rooms',)
+    inlines = [BoarderRoomInLine,AmenityRoomInLine]
+    readonly_fields = ('total_rooms','total_amenityrooms',)
     
     def current_total_occupancy(self, obj):
         return obj.getCurrentOccupancy()
     def max_total_occupancy(self, obj):
         return obj.getMaxOccupancy()
     
-    list_display = ('name', 'total_rooms', 'current_total_occupancy', 'max_total_occupancy')
-    
-    
+    list_display = ('name', 'total_rooms', 'total_amenityrooms', 'current_total_occupancy', 'max_total_occupancy')
+     
+        
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Hall, HallAdmin)
 admin.site.register(BoarderRoom, BoarderRoomAdmin)
+admin.site.register(AmenityRoom, AmenityRoomAdmin)
 
 class HMCAdmin(AdminSite):
     site_header = "HMC Admin Area"
