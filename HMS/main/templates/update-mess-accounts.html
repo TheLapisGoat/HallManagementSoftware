@@ -17,6 +17,11 @@
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
         <h1>Update Mess Accounts</h1>
+        {% if messages %}
+            {%for message in messages%}
+                {{message}}
+            {%endfor%}
+        {%endif%}
         <form method="post">
             {% csrf_token %}
             {{ formset.management_form }}
