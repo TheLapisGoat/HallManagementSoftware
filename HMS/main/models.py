@@ -102,19 +102,13 @@ class BoarderRoom(Room):
         
     
 class Student(models.Model):
-    person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "student", primary_key = True, blank = False)
+    person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "student", primary_key = True, blank = False, unique = True)
     hall = models.ForeignKey(Hall, on_delete = models.PROTECT, related_name = "students", blank = False)
     rollNumber = models.CharField("Roll Number", max_length = 100, blank = False)
     room = models.ForeignKey(BoarderRoom, on_delete = models.PROTECT, related_name = "students", blank = False) 
+    
     def getRollNumber(self):
         return self.rollNumber
-    # def getMessDue(self):
-    #     return self.messAccount.getDue()
-    # def getRoomRent(self):
-    #     return self.room.getRent()
-    # def getAmenityDues(self):
-    # return self.hall.amenityRoom.getRent()
-    #roomNumber = models.ForeignKey()
     
     def save(self, *args, **kwargs):
         super(Student, self).save(*args, **kwargs)
@@ -133,15 +127,9 @@ class Student(models.Model):
 #     def getRoomFees(self):
 #         return self.roomFees
 
-# class MessAccount(models.Model):
-#     student = models.OneToOneField(Student, on_delete = models.CASCADE, related_name = "messAccount")
-#     due = models.FloatField()
-    
-#     def getDue(self):
-#         return self.due
-#     def setDue(self, value):
-#         self.due = value
-#         self.save()
+class MessAccount(models.Model):
+    student = models.OneToOneField(Student, on_delete = models.CASCADE, related_name = "messAccount", blank = False, primary_key = True, unique = True)
+    due = models.DecimalField("Mess Due", blank = False, default = 0, max_digits = 8, decimal_places = 2)
             
 # class ComplaintRegister(models.Model):
 #     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "complaintRegister")
