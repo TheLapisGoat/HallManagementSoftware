@@ -23,8 +23,11 @@ def index(request):
     if role == "admission":
         return redirect("admission-index")
     elif role == "student":
+        hall = request.user.student.hall.name
         roomNumber = request.user.student.room.roomNumber
-        return render(request, "index-student.html", context = {'room': roomNumber})
+        rent = request.user.student.room.rent
+        context = {'room': roomNumber, 'hall': hall, 'rent': rent}
+        return render(request, "index-student.html",context )
     else:
         return HttpResponse("Damn Boi")
 

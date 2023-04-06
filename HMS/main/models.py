@@ -61,22 +61,17 @@ class Room(models.Model):
     rent = models.FloatField("Rent", default = 0, blank = False)
     
     def __str__(self):
-        return self.roomNumber
-    def getRent(self):
-        return self.rent
-    def getRoomNumber(self):
-        return self.roomNumber
-    
+        return self.roomNumber    
     class Meta:
         abstract = True
         
 
 # class AmenityRoom(Room):
-#     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "amenityRooms")
-#     amenityName = models.CharField(max_length = 100)
-
-#     def getAmenityName(self):
-#         return self.amenityName
+#     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "amenityRoom", blank = False)
+#     name = models.CharField("Name", max_length = 100, blank = False)
+    
+#     def __str__(self):
+#         return self.name
 
 class BoarderRoom(Room):
     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "boarderRooms", blank = False)
@@ -111,12 +106,8 @@ class Student(models.Model):
     hall = models.ForeignKey(Hall, on_delete = models.PROTECT, related_name = "students", blank = False)
     rollNumber = models.CharField("Roll Number", max_length = 100, blank = False)
     room = models.ForeignKey(BoarderRoom, on_delete = models.PROTECT, related_name = "students", blank = False) 
-    # def getHall(self):
-        # return self.hall
     def getRollNumber(self):
         return self.rollNumber
-    # def getRoomNumber(self):
-    #     return self.room.getRoomNumber()
     # def getMessDue(self):
     #     return self.messAccount.getDue()
     # def getRoomRent(self):
