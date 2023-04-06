@@ -22,7 +22,11 @@ def index(request):
     role = request.user.role
     if role == "admission":
         return redirect("admission-index")
-    return render(request, "index-student.html")
+    elif role == "student":
+        roomNumber = request.user.student.room.roomNumber
+        return render(request, "index-student.html", context = {'room': roomNumber})
+    else:
+        return HttpResponse("Damn Boi")
 
 @login_required(login_url = "main-login")
 def admissionIndex(request):

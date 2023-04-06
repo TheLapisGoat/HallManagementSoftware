@@ -6,8 +6,6 @@ from django.contrib.auth.admin import UserAdmin
 from django.shortcuts import redirect
 from django.contrib.admin import AdminSite, ModelAdmin
 from .forms import PersonCreationForm, PersonChangeForm
-from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
 
 class PersonAdmin(UserAdmin):
     add_form = PersonCreationForm
