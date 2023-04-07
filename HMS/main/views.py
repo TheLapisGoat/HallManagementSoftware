@@ -18,7 +18,7 @@ def getFreeRoom():
                 if room.currentOccupancy < room.maxOccupancy:
                     return room
     return None
-# Create your views here.
+
 @login_required(login_url = "main-login")
 def index(request):
     role = request.user.role
@@ -73,6 +73,7 @@ def newAdmission(request):
                 hall = room.hall,
                 room = room
             )
+            
             return redirect("admission-index")
         else:
             return render(request, 'student_admission.html', {'form': form})
@@ -108,7 +109,7 @@ def manageMessAccounts(request):
         if formset.is_valid():
             formset.save()
             messages.success(request, 'Mess accounts updated successfully')
-            return render(request, 'update-mess-accounts.html', {'formset': formset})
+            return redirect("manage-mess-accounts")
         else:
             return render(request, 'update-mess-accounts.html', {'formset': formset})
     else:

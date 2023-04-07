@@ -18,33 +18,41 @@
         <![endif]-->
         <h1>Update Mess Accounts</h1>
         {% if messages %}
-            {%for message in messages%}
-                {{message}}
-            {%endfor%}
-        {%endif%}
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        {% endif %}
         <form method="post">
             {% csrf_token %}
             {{ formset.management_form }}
-            <table>
-              <thead>
-                <tr>
-                  <th>Roll No</th>
-                  <th>Current Due</th>
-                  <th>New Due</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for form in formset %}
-                  <tr>
-                    <td>{{ form.instance.student.rollNumber }}</td>
-                    <td>{{ form.instance.due }}</td>
-                    <td>{{ form.as_ul }}</td>
-                  </tr>
+              <table id="formset" class="form">
+              {% for form in formset.forms %}
+                {% if forloop.first %}
+                <thead><tr>
+                  {% for field in form.visible_fields %}
+                  <th>{{ field.label|capfirst }}</th>
+                  {% endfor %}
+                </tr></thead>
+                {% endif %}
+                <tr class="{% cycle row1 row2 %}">
+                {% for field in form.visible_fields %}
+                  <td>
+                  {# Include the hidden fields in the form #}
+                  {% if forloop.first %}
+                    {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                    {% endfor %}
+                  {% endif %}
+                    {{ field.errors.as_ul }}
+                    {{ field }}
+                  </td>
                 {% endfor %}
-              </tbody>
-            </table>
-            <input type="submit" value="Save">
+                </tr>
+              {% endfor %}
+              </table>
+              <input type="submit" value="Submit" />
         </form>
+        <a href = "{% url 'messmanager-index' %}">Home</a>
         <script src="" async defer></script>
     </body>
 </html>
