@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Dues</title>
+    
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<style>
+    .card {
+      margin: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s ease-in-out;
+    }
+    .card:hover {
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    .card-header {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .card-body {
+      font-size: 16px;
+    }
+    .card-toggle {
+      cursor: pointer;
+      text-align: right;
+    }
+  </style>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Room Rent</h5>
+                    {% if room_dues %}
+                        <h6 class="card-subtitle mb-2 text-muted">Your room rent is {{room_dues}}</h6>
+                    {% else %}
+                        <h6 class="card-subtitle mb-2 text-muted">No room rent dues</h6>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Amenity Rent</h5>
+                    {% if amenity_rooms %}
+                        <h6 class="card-subtitle mb-2 text-muted">Your amenity rent for the hall is:</h6>
+                        {% for amenity in amenity_rooms %}
+                            <h6 class="card-subtitle mb-2">{{amenity.name}}: {{amenity.total_rent}}</h6>
+                        {% endfor %}
+                    {% else %}
+                        <h6 class="card-subtitle mb-2 text-muted">No amenity rent dues</h6>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Mess Dues</h5>
+                    {% if mess_dues %}
+                        <h6 class="card-subtitle mb-2 text-muted">Your mess dues are {{mess_dues}}</h6>
+                    {% else %}
+                        <h6 class="card-subtitle mb-2 text-muted">No mess dues</h6>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 4 JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
