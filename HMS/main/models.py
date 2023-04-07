@@ -15,40 +15,27 @@ class Person(AbstractUser, PermissionsMixin):
         ('admission', 'AdmissionUnit')
     ]
     
-    role = models.CharField("Role", max_length=40, choices=ROLES, default='student')
+    role = models.CharField("Role", max_length=40, choices=ROLES, default='student', blank = False)
 
     class Meta:
         verbose_name = "Person"
         verbose_name_plural = "Persons"
         
-    address = models.TextField("Address")
-    telephoneNumber = models.IntegerField("TelephoneNumber")
+    address = models.TextField("Address", blank=False)
+    telephoneNumber = models.IntegerField("TelephoneNumber", blank=False)
     #photograph = models.ImageField("Photo")
 
     REQUIRED_FIELDS = ["email", "address", "telephoneNumber", "role", "first_name", "last_name"]
     
 class Hall(models.Model):
     name = models.CharField("Name", max_length = 100, blank = False, primary_key = True)
-    total_rooms  = models.IntegerField("Total Rooms", default = 0)
-    
-    def save(self, *args, **kwargs):
-        self.total_rooms = self.boarderRooms.count()
-        super(Hall, self).save(*args, **kwargs)
+    total_rooms  = models.IntegerField("Total Rooms", default = 0, blank = False)
         
     def getCurrentOccupancy(self):
         return self.boarderRooms.aggregate(total = Sum('currentOccupancy'))['total']
     
     def getMaxOccupancy(self):
         return self.boarderRooms.aggregate(total = Sum('maxOccupancy'))['total']
-    
-    def save(self, *args, **kwargs):
-        if self.pk is None:
-            super(Hall, self).save(*args, **kwargs)
-            self.total_rooms = self.boarderRooms.count()
-            self.save()
-        else:
-            self.total_rooms = self.boarderRooms.count()
-            super(Hall, self).save(*args, **kwargs)
             
 class MessManager(models.Model):
     person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "mess_manager", primary_key = True, blank = False, unique = True)
@@ -61,8 +48,6 @@ class MessManager(models.Model):
         else:
             self.person.role = 'mess_manager'
             super(MessManager, self).save(*args, **kwargs)
-    # warden = models.OneToOneField(Warden, on_delete = models.CASCADE, related_name = "warden")
-    # expenditure = models.OneToOneField(HallBudget, on_delete = models.CASCADE, related_name = "expenditure")
 
 class Room(models.Model):
     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "rooms", blank = False)
@@ -73,55 +58,18 @@ class Room(models.Model):
         return self.roomNumber    
     class Meta:
         abstract = True
-        
-
-# class AmenityRoom(Room):
-#     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "amenityRoom", blank = False)
-#     name = models.CharField("Name", max_length = 100, blank = False)
-    
-#     def __str__(self):
-#         return self.name
 
 class BoarderRoom(Room):
     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "boarderRooms", blank = False)
     newstatus = models.BooleanField("New Status", blank = False, default = True)
     maxOccupancy = models.IntegerField("Max Occupancy", blank = False)
     currentOccupancy = models.IntegerField("Current Occupancy", blank = False, default = 0)
-
-    def getNewStatus(self):
-        return self.newstatus
-    def getOccupancyNumber(self):
-        return self.occupancyNumber
-    def setOccupancyNumber(self, value):
-        self.occupancyNumber = value
-        self.save()
-    def getCurrentNoStudents(self):
-        return self.currentnoStudents
-    
-    def save(self, *args, **kwargs):
-        if self.pk is None:
-            super(BoarderRoom, self).save(*args, **kwargs)
-            self.currentOccupancy = self.students.count()
-            self.save()
-            self.hall.save()
-        else:
-            self.currentOccupancy = self.students.count()
-            super(BoarderRoom, self).save(*args, **kwargs)
-            self.hall.save()
-        
     
 class Student(models.Model):
     person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "student", primary_key = True, blank = False, unique = True)
     hall = models.ForeignKey(Hall, on_delete = models.PROTECT, related_name = "students", blank = False)
-    rollNumber = models.CharField("Roll Number", max_length = 100, blank = False)
-    room = models.ForeignKey(BoarderRoom, on_delete = models.PROTECT, related_name = "students", blank = False) 
-    
-    def getRollNumber(self):
-        return self.rollNumber
-    
-    def save(self, *args, **kwargs):
-        super(Student, self).save(*args, **kwargs)
-        self.room.save()
+    rollNumber = models.CharField("Roll Number", max_length = 100, blank = False, unique = True)
+    room = models.ForeignKey(BoarderRoom, on_delete = models.PROTECT, related_name = "students", blank = False)
 
 # class Warden(models.Model):
 #     person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "warden", primary_key = True)

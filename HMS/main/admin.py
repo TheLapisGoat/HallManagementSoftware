@@ -5,7 +5,7 @@ from .models import Person, Student, Hall, BoarderRoom, MessAccount, MessManager
 from django.contrib.auth.admin import UserAdmin
 from django.shortcuts import redirect
 from django.contrib.admin import AdminSite, ModelAdmin
-from .forms import PersonCreationForm, PersonChangeForm
+from .forms import PersonCreationForm, PersonChangeForm, StudentCreationForm, StudentChangeForm
 
 class PersonAdmin(UserAdmin):
     add_form = PersonCreationForm
@@ -30,6 +30,8 @@ class PersonAdmin(UserAdmin):
 
 class StudentAdmin(ModelAdmin):
     model = Student
+    add_form = StudentCreationForm
+    form = StudentChangeForm
     
     def username(self, obj):
         return obj.person.username
@@ -39,6 +41,13 @@ class StudentAdmin(ModelAdmin):
     
     def last_name(self, obj):
         return obj.person.last_name
+    
+    def get_form(self, request, obj=None, **kwargs):
+        defaults = {}
+        if obj is None:
+            defaults['form'] = self.add_form
+        defaults.update(kwargs)
+        return super().get_form(request, obj, **defaults)
     
     list_display = ('rollNumber', 'username', 'first_name', 'last_name')
     
