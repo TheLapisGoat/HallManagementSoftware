@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Passbook</title>
+</head>
+<body>
+	<h1>Passbook</h1>
+	<h2>Dues</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Type</th>
+				<th>Demand</th>
+				<th>Timestamp</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for due in dues %}
+			<tr>
+				<td>{{ due.get_type_display }}</td>
+				<td>{{ due.demand }}</td>
+				<td>{{ due.timestamp }}</td>
+			</tr>
+			{% endfor %}
+			{% if not dues %}
+			<tr>
+				<td colspan="3">No dues found.</td>
+			</tr>
+			{% endif %}
+		</tbody>
+	</table>
+	
+	<h2>Payments</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Fulfilled</th>
+				<th>Timestamp</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for payment in payments %}
+			<tr>
+				<td>{{ payment.fulfilled }}</td>
+				<td>{{ payment.timestamp }}</td>
+			</tr>
+			{% endfor %}
+			{% if not payments %}
+			<tr>
+				<td colspan="2">No payments found.</td>
+			</tr>
+			{% endif %}
+		</tbody>
+	</table>
+	
+	<p>Total dues: {{ total_due }}</p>
+	<p>Total paid: {{ total_paid }}</p>
+    <a href = "{% url 'pay' %}">Pay Fees</a>
+</body>
+</html>
+

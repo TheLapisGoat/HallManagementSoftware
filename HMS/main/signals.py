@@ -1,11 +1,16 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from .models import Student, MessAccount, Hall, BoarderRoom
+from .models import Student, MessAccount, Hall, BoarderRoom, Passbook
 
 @receiver(post_save, sender=Student)
 def create_mess_account(sender, instance, created, **kwargs):
     if created:
         MessAccount.objects.create(student = instance)
+        
+@receiver(post_save, sender=Student)
+def create_mess_account(sender, instance, created, **kwargs):
+    if created:
+        Passbook.objects.create(student = instance)
         
 @receiver(pre_save, sender = Hall)
 def update_total_rooms(sender, instance, **kwargs):

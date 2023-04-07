@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from .models import Person, MessAccount, Student, Hall, BoarderRoom
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class PersonCreationForm(UserCreationForm):
     address = forms.CharField(max_length=255, required=True)
@@ -133,5 +133,13 @@ class MessUpdateForm(forms.ModelForm):
             student = self.instance.student
             self.fields['currentDue'].initial = self.instance.due
             self.fields['rollNumber'].initial = student.rollNumber
+
+class PaymentForm(forms.Form):
+    amount = forms.DecimalField(label='Amount', max_digits=8, decimal_places=2, validators = [MinValueValidator(10)])
+    
+    def __init__(self, total_due, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["amount"].validators.append(MaxValueValidator(total_due))
+        self.fields["amount"].initial = total_due
         
 MessAccountFormSet = forms.modelformset_factory(model = MessAccount, form = MessUpdateForm, fields=('rollNumber', 'currentDue', 'due',), extra = 0)

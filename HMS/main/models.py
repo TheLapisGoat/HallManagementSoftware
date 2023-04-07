@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser, PermissionsMixin
+from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db.models import Sum
 # Create your models here.
 
@@ -90,12 +90,28 @@ class MessAccount(models.Model):
     paid = models.DecimalField("Paid", blank = False, default = 0, max_digits = 8, decimal_places = 2)
     last_update = models.DateField("Last Update Date", auto_now_add = True)
     
-class MessAccountHistory(models.Model):
-    mess_account = models.ForeignKey(MessAccount, on_delete=models.CASCADE, blank = False, related_name = "mess_account_history")
-    last_update = models.DateField("Last Updated Date", blank = False)
-    due = models.DecimalField("Mess Due", blank = False, default = 0, max_digits = 8, decimal_places = 2)
+class Passbook(models.Model):
+    student = models.OneToOneField(Student, on_delete = models.CASCADE, related_name = "passbook", blank = False, primary_key = True, unique = True)
+
+class Due(models.Model):
     
-            
+    TYPE = [
+        ('mess', 'Mess Due'),
+        ('boarderRoom', 'Boarder Room Due'),
+        ('amenityRooms', 'Amenity Rooms Due'),
+    ]
+    
+    timestamp = models.DateTimeField("Timestamp", blank = False, auto_now_add = True)
+    demand = models.DecimalField("Demand", blank = False, default = 0, max_digits = 8, decimal_places = 2)
+    type = models.CharField("Type", max_length = 100, choices = TYPE, blank = False, default = 'mess')
+    passbook = models.ForeignKey(Passbook, on_delete = models.CASCADE, related_name = "dues", blank = False)
+    
+class Payment(models.Model):
+    
+    timestamp = models.DateTimeField("Timestamp", blank = False, auto_now_add = True)
+    fulfilled = models.DecimalField("Fulfilled", blank = False, default = 0, max_digits = 8, decimal_places = 2)
+    passbook = models.ForeignKey(Passbook, on_delete = models.CASCADE, related_name = "payments", blank = False)
+    
 # class ComplaintRegister(models.Model):
 #     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "complaintRegister")
     
