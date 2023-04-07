@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from .models import Student, MessAccount, Hall, BoarderRoom, AmenityRoom, ComplaintRegister
+from .models import Student, MessAccount, Hall, BoarderRoom, AmenityRoom, ComplaintRegister, Warden
 
 @receiver(post_save, sender=Student)
 def create_mess_account(sender, instance, created, **kwargs):
@@ -8,7 +8,7 @@ def create_mess_account(sender, instance, created, **kwargs):
         MessAccount.objects.create(student = instance)
 
 @receiver(post_save, sender=Hall)
-def create_mess_account(sender, instance, created, **kwargs):
+def create_complaint_register(sender, instance, created, **kwargs):
     if created:
         ComplaintRegister.objects.create(hall = instance)
         

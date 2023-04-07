@@ -79,10 +79,10 @@ class Student(models.Model):
     rollNumber = models.CharField("Roll Number", max_length = 100, blank = False, unique = True)
     room = models.ForeignKey(BoarderRoom, on_delete = models.PROTECT, related_name = "students", blank = False)
 
-# class Warden(models.Model):
-#     person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "warden", primary_key = True)
-#     hall = models.OneToOneField(Hall, on_delete = models.PROTECT, related_name = "warden", blank = False, unique = True)
-#     #IAMAWARDEN
+class Warden(models.Model):
+    person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "warden", primary_key = True)
+    hall = models.OneToOneField(Hall, on_delete = models.PROTECT, related_name = "warden", blank = False, unique = True)
+    
 
 # class Fees(models.Model):
 #     student = models.OneToOneField(Student, on_delete = models.CASCADE, related_name = "fees")
@@ -104,6 +104,14 @@ class MessAccountHistory(models.Model):
     last_update = models.DateField("Last Updated Date", blank = False)
     due = models.DecimalField("Mess Due", blank = False, default = 0, max_digits = 8, decimal_places = 2)
     
+# class ATR(models.Model):
+#     name = models.CharField(max_length = 100)
+#     details = models.TextField()
+#     complaint = models.ForeignKey(Complaint, on_delete = models.CASCADE, related_name = "ATR")
+
+#     def change_status(self, status):
+#         self.status = status
+#         self.save() 
             
 class ComplaintRegister(models.Model):
     hall = models.OneToOneField(Hall, on_delete = models.CASCADE, related_name = "complaint_register", blank = False, primary_key = True)
@@ -140,14 +148,6 @@ class Complaint(models.Model):
     #         super(Complaint, self).save(*args, **kwargs)
     #         self.complaintregister.save()
             
-# class ATR(models.Model):
-#     name = models.CharField(max_length = 100)
-#     details = models.TextField()
-#     complaint = models.ForeignKey(Complaint, on_delete = models.CASCADE, related_name = "ATR")
-
-#     def change_status(self, status):
-#         self.status = status
-#         self.save() 
 
 # class HallBudget(models.Model):
 #     hall = models.OneToOneField(Hall, on_delete = models.CASCADE, related_name = "hallBudget")
