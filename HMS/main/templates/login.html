@@ -8,6 +8,47 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{% static 'css/login.css' %}">
+        <style>
+            body {
+                background-color: #f2f2f2;
+                font-family: Arial, sans-serif;
+            }
+            
+            form {
+                border: 2px solid #ccc;
+                padding: 20px;
+                width: 300px;
+                margin: 50px auto;
+                background-color: #fff;
+            }
+            
+            input[type="submit"] {
+                background-color: #4CAF50;
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+            }
+            
+            p {
+                color: #333;
+                font-size: 32px;
+                text-align: center;
+                margin-top: 100px;
+            }
+            
+            .message {
+                color: #333;
+                font-size: 16px;
+                text-align: center;
+                margin-top: 20px;
+            }
+        </style>
     </head>
     <body>
         <p>WELCOME TO HMS!</p>
@@ -16,13 +57,13 @@
             {{ form }}
             <input type="submit" value="Submit">
         </form>
-        <script src="" async defer></script>
-        <div>
+        <div class="message">
             {%if messages%}
                 {%for message in messages%}
                     {{message}}
                 {%endfor%}
             {%endif%}
         </div>
+        <script src="" async defer></script>
     </body>
 </html>
