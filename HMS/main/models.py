@@ -105,18 +105,41 @@ class MessAccountHistory(models.Model):
     due = models.DecimalField("Mess Due", blank = False, default = 0, max_digits = 8, decimal_places = 2)
     
             
-# class ComplaintRegister(models.Model):
-#     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "complaintRegister")
+class ComplaintRegister(models.Model):
+    hall = models.OneToOneField(Hall, on_delete = models.CASCADE, related_name = "complaint_register", blank = False, primary_key = True)
+        
+    def __str__(self):
+        return self.hall.name
+        
+    # def save(self, *args, **kwargs):
+    #     if self.pk is None:
+    #         super(ComplaintRegister, self).save(*args, **kwargs)
+    #         self.save()
+    #         self.hall.save()
+    #     else:
+    #         super(ComplaintRegister, self).save(*args, **kwargs)
+    #         self.hall.save()
+            
+class Complaint(models.Model):
+    complaintregister = models.ForeignKey(ComplaintRegister, on_delete = models.CASCADE, related_name = "r_complaints")
+    student = models.ForeignKey(Student, on_delete = models.CASCADE, related_name = "s_complaints")
+    title = models.CharField(max_length = 100)
+    description = models.TextField()
+    date = models.DateField()
+    nameagainst = models.CharField(max_length = 100)
+    status = models.CharField(max_length = 100, default = "Pending")
     
+    #image = models.ImageField()
     
-# class Complaint(models.Model):
-#     ComplaintRegister = models.ForeignKey(ComplaintRegister, on_delete = models.CASCADE, related_name = "complaints")
-#     details = models.TextField()
-#     date = models.DateField()
-#     nameagainst = models.CharField(max_length = 100)
-#     #image = models.ImageField()
-#     status = models.CharField(max_length = 100)
-
+    # def save(self, *args, **kwargs):
+    #     if self.pk is None:
+    #         super(Complaint, self).save(*args, **kwargs)
+    #         self.save()
+    #         self.complaintregister.save()
+    #     else:
+    #         super(Complaint, self).save(*args, **kwargs)
+    #         self.complaintregister.save()
+            
 # class ATR(models.Model):
 #     name = models.CharField(max_length = 100)
 #     details = models.TextField()
@@ -124,7 +147,7 @@ class MessAccountHistory(models.Model):
 
 #     def change_status(self, status):
 #         self.status = status
-#         self.save()
+#         self.save() 
 
 # class HallBudget(models.Model):
 #     hall = models.OneToOneField(Hall, on_delete = models.CASCADE, related_name = "hallBudget")

@@ -6,8 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Student, Person, Hall, MessAccount, MessAccountHistory
-from .forms import StudentAdmissionForm, MessAccountFormSet
+from .models import Student, Person, Hall, MessAccount, MessAccountHistory, Complaint
+from .forms import StudentAdmissionForm, MessAccountFormSet, ComplaintForm
 
 def getFreeRoom():
     halls = Hall.objects.all()
@@ -150,3 +150,29 @@ def logoutUser(request):
     logout(request)
     messages.success(request, "Successfully Logged Out")
     return redirect("main-login")
+
+@login_required(login_url = "main-login")
+def complaints(request):
+    complaints = request.user.student.s_complaints.all()
+    return render(request, "complaints.html", {'complaints': complaints})
+
+@login_required(login_url = "main-login")    
+def newComplaints(request):
+    if request.method == 'POST':
+        form = ComplaintForm(request.POST)
+        if form.is_valid():
+            complaint = Complaint.objects.create(
+                student = request.user.student,
+                title = form.cleaned_data['title'],
+                description = form.cleaned_data['description'],
+                date = form.cleaned_data['date'],
+                nameagainst = form.cleaned_data['nameagainst'],
+                complaintregister = request.user.student.hall.complaint_register
+            )
+            request.user.student.s_complaints.add(complaint)
+            return redirect("complaints-student")
+        else:
+            return render(request, "new-complaints.html", {'form': form})
+    else:
+        form = ComplaintForm()
+        return render(request, 'new-complaints.html', {'form': form})

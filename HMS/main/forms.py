@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
-from .models import Person, MessAccount, Student, Hall, BoarderRoom
+from .models import Person, MessAccount, Student, Hall, BoarderRoom, Complaint
 from django.core.validators import MinValueValidator
 
 class PersonCreationForm(UserCreationForm):
@@ -135,3 +135,13 @@ class MessUpdateForm(forms.ModelForm):
             self.fields['rollNumber'].initial = student.rollNumber
         
 MessAccountFormSet = forms.modelformset_factory(model = MessAccount, form = MessUpdateForm, fields=('rollNumber', 'currentDue', 'due',), extra = 0)
+
+class ComplaintForm(forms.Form):
+    title = forms.CharField(max_length = 100, required = True)
+    description = forms.CharField(widget = forms.Textarea, required = True)
+    complainee = forms.CharField(max_length = 100, required = True, help_text = "Name of the person against whom the complaint is being filed")
+    date = forms.DateField(required = True, help_text="Date of the incident")
+    
+    def clean(self):
+        cleaned_data = super(forms.Form, self).clean()
+        return cleaned_data
