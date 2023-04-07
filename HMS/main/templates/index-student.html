@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -10,7 +11,7 @@
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="{% static 'css/student.css' %}">
     </head>
     <body>
         {% if messages %}
@@ -18,12 +19,15 @@
                 {{message}}
             {%endfor%}
         {%endif%}
-        <h1>Hello, you are student</h1>
-        <h2>Your room is {{room}} in {{hall}}</h2>
-        <h2>Your room rent is {{rent}}</h2>
-        <h2>Your Amenity rent for the hall is {{sum_amenity}}</h2>
-        <a href = "{% url 'main-logout' %}">Logout</a>
-        
+        <h1>Hello, {{name}}</h1>
+        <h2>Your room is {{room}}, {{hall}}</h2>
+        <h2><a href="{% url 'dues-student' %}">View your dues</a></h2>
+        <!-- <h2>Your room rent is {{rent}}</h2>
+        <h2>Your Amenity rent for the hall is {{sum_amenity}}</h2> -->
+        <form action="{% url 'main-logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
         <script src="" async defer></script>
     </body>
 </html>

@@ -25,11 +25,12 @@ def index(request):
     if role == "admission":
         return redirect("admission-index")
     elif role == "student":
+        name = request.user.first_name + " " + request.user.last_name
         hall = request.user.student.hall.name
         roomNumber = request.user.student.room.roomNumber
         rent = request.user.student.room.rent
         sum_amenity = request.user.student.hall.amenityRooms.aggregate(Sum('rent'))['rent__sum']
-        context = {'room': roomNumber, 'hall': hall, 'rent': rent, 'sum_amenity': sum_amenity}
+        context = {'name': name, 'room': roomNumber, 'hall': hall, 'rent': rent, 'sum_amenity': sum_amenity,}
         return render(request, "index-student.html",context )
     elif role == "mess_manager":
         return redirect("messmanager-index")
@@ -118,7 +119,14 @@ def manageMessAccounts(request):
         
     return render(request, 'update-mess-accounts.html', {"formset": formset})
         
-    
+@login_required(login_url = "main-login")
+def dues(request):
+    if request.user.role != "student":
+        return redirect("index")
+    student = request.user.student
+    room_dues=student.room.rent
+    amenity_rooms = request.user.student.hall.amenityRooms.annotate(total_rent=Sum('rent')).values('name', 'total_rent')
+    return render(request, 'dues-student.html', {'student': student, 'room_dues': room_dues, 'amenity_rooms': amenity_rooms})
 
 def loginUser(request):
     if request.user.is_authenticated:

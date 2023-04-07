@@ -81,6 +81,7 @@ class Student(models.Model):
 
 # class Warden(models.Model):
 #     person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "warden", primary_key = True)
+#     hall = models.OneToOneField(Hall, on_delete = models.PROTECT, related_name = "warden", blank = False, unique = True)
 #     #IAMAWARDEN
 
 # class Fees(models.Model):
@@ -173,3 +174,11 @@ class MessAccountHistory(models.Model):
 #     def change_value(self, value):
 #         self.allocated_grant = value
 #         self.save()
+
+# class Leave(models.Model):
+#     hall= models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "leaves")
+#     person= models.ForeignKey(Person, on_delete = models.CASCADE, related_name = "leaves")
+#     approved = models.BooleanField(default = False)
+#     description = models.TextField()
+#     start_date = models.DateField()
+#     end_date = models.DateField()
