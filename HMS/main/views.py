@@ -31,7 +31,7 @@ def index(request):
         rent = request.user.student.room.rent
         sum_amenity = request.user.student.hall.amenityRooms.aggregate(Sum('rent'))['rent__sum']
         context = {'name': name, 'room': roomNumber, 'hall': hall, 'rent': rent, 'sum_amenity': sum_amenity,}
-        return render(request, "index-student.html",context )
+        return render(request, "index-student.html",context)
     elif role == "mess_manager":
         return redirect("messmanager-index")
     else:
@@ -213,7 +213,7 @@ def newComplaints(request):
                 title = form.cleaned_data['title'],
                 description = form.cleaned_data['description'],
                 date = form.cleaned_data['date'],
-                nameagainst = form.cleaned_data['nameagainst'],
+                nameagainst = form.cleaned_data['complainee'],
                 complaintregister = request.user.student.hall.complaint_register
             )
             request.user.student.s_complaints.add(complaint)
