@@ -29,8 +29,8 @@ class Person(AbstractUser, PermissionsMixin):
     
 class Hall(models.Model):
     name = models.CharField("Name", max_length = 100, blank = False, primary_key = True)
-    total_rooms  = models.IntegerField("Total Rooms", default = 0, blank = False)
-    total_amenityrooms  = models.IntegerField("Total Amenity Rooms", default = 0)
+    total_boarderrooms  = models.IntegerField("Total Boarder Rooms", default = 0, blank = False)
+    total_amenityrooms  = models.IntegerField("Total Amenity Rooms", default = 0, blank = False)
         
     def getCurrentOccupancy(self):
         return self.boarderRooms.aggregate(total = Sum('currentOccupancy'))['total']
@@ -66,15 +66,6 @@ class AmenityRoom(Room):
         
     def __str__(self):
         return self.name
-    
-    def save(self, *args, **kwargs):
-        if self.pk is None:
-            super(AmenityRoom, self).save(*args, **kwargs)
-            self.save()
-            self.hall.save()
-        else:
-            super(AmenityRoom, self).save(*args, **kwargs)
-            self.hall.save()
 
 class BoarderRoom(Room):
     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "boarderRooms", blank = False)

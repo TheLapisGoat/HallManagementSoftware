@@ -79,14 +79,14 @@ class AmenityRoomAdmin(ModelAdmin):
 class HallAdmin(ModelAdmin):
     model = Hall
     inlines = [BoarderRoomInLine,AmenityRoomInLine]
-    readonly_fields = ('total_rooms','total_amenityrooms',)
+    readonly_fields = ('total_boarderrooms','total_amenityrooms',)
     
     def current_total_occupancy(self, obj):
         return obj.getCurrentOccupancy()
     def max_total_occupancy(self, obj):
         return obj.getMaxOccupancy()
     
-    list_display = ('name', 'total_rooms', 'total_amenityrooms', 'current_total_occupancy', 'max_total_occupancy')
+    list_display = ('name', 'total_boarderrooms', 'total_amenityrooms', 'current_total_occupancy', 'max_total_occupancy')
      
         
 admin.site.register(Person, PersonAdmin)
