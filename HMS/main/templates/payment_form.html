@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Pay Fees</title>
+</head>
+<body>
+    <h1>Pay Fees</h1>
+    <p>Total Due: {{ total_due }}</p>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Pay">
+        <button type="button" onclick="document.getElementById('id_amount').value='{{ total_due }}'">Pay Full Amount</button>
+    </form>
+    
+</body>
+</html>

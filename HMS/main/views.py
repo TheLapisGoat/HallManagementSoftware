@@ -6,8 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Student, Person, Hall, MessAccount, MessAccountHistory, Complaint, Warden
-from .forms import StudentAdmissionForm, MessAccountFormSet, ComplaintForm, WardenCreationForm, WardenAdmissionForm
+from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden
+from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm
 
 def getFreeRoom():
     halls = Hall.objects.all()
@@ -36,6 +36,53 @@ def index(request):
         return redirect("messmanager-index")
     else:
         return HttpResponse("Damn Boi")
+    
+@login_required(login_url = "main-login")
+def passbook(request):
+    if request.user.role != "student":
+        return redirect("index")
+
+    student = request.user.student
+    passbook = student.passbook
+    dues = passbook.dues.order_by('-timestamp')
+    payments = passbook.payments.order_by('-timestamp')
+    total_due = dues.aggregate(total=Sum('demand'))['total']
+    total_paid = payments.aggregate(total=Sum('fulfilled'))['total']
+
+    context = {
+        'dues': dues,
+        'payments': payments,
+        'total_due': total_due,
+        'total_paid': total_paid,
+    }
+
+    return render(request, 'passbook.html', context)
+
+@login_required(login_url = "main-login")
+def pay(request):
+    if request.user.role != "student":
+        return redirect("index")
+    dues = request.user.student.passbook.dues.all()
+    payments = request.user.student.passbook.payments.all()
+    total_due = dues.aggregate(total = Sum('demand'))['total']
+    total_paid = payments.aggregate(total = Sum('fulfilled'))['total']
+    
+    if total_paid is not None and total_due is not None:
+        total_due = total_due - total_paid
+    
+    if total_due > 0:
+        if request.method == 'POST':
+            form = PaymentForm(total_due, request.POST)
+            if form.is_valid():
+                return HttpResponse("hafljds")
+            else:
+                return render(request, 'payment_form.html', {'form': form, 'total_due': total_due})
+        else:
+            form = PaymentForm(total_due=total_due)
+
+        return render(request, 'payment_form.html', {'form': form, 'total_due': total_due})
+    else:
+        return HttpResponse("You have no dues")
 
 @login_required(login_url = "main-login")
 def admissionIndex(request):
@@ -100,7 +147,7 @@ def manageMessAccounts(request):
     for student in students:
         mess_account = student.messAccount
         if current_date.month != mess_account.last_update.month or current_date.year != mess_account.last_update.year:
-            MessAccountHistory.objects.create(mess_account = mess_account, last_update = mess_account.last_update, due = mess_account.due)
+            Due.objects.create(demand = mess_account.due, type = "mess", passbook = student.passbook)
             mess_account.last_update = current_date
             mess_account.due = 0
             mess_account.save()

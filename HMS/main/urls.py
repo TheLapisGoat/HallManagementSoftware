@@ -14,8 +14,9 @@ urlpatterns = [
     path("admission/new_admission/", views.newAdmission, name = "newadmission"),
     path("messmanager/", views.messManagerIndex, name = "messmanager-index"),
     path("messmanager/manage_accounts/", views.manageMessAccounts, name = "manage-mess-accounts"),
-    path("home/dues", views.dues, name = "dues-student"),
     path("home/complaints", views.complaints, name = "complaints-student"),
     path("home/newcomplaints", views.newComplaints, name = "newcomplaints-student"),
     path("home/newwarden", views.newWarden, name = "newwarden"),
+    path("passbook/", views.passbook, name = "passbook"),
+    path("passbook/pay", views.pay, name = "pay"),
 ]

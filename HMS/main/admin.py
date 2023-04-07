@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Person, Student, Hall, BoarderRoom, MessAccount, MessManager, MessAccountHistory, AmenityRoom, Complaint, ComplaintRegister, Warden
+from .models import Person, Student, Hall, BoarderRoom, MessAccount, MessManager, Passbook, Due, AmenityRoom, Complaint, ComplaintRegister, Warden
 # Register your models here.
 
 from django.contrib.auth.admin import UserAdmin
@@ -100,7 +100,8 @@ admin.site.register(Hall, HallAdmin)
 admin.site.register(BoarderRoom, BoarderRoomAdmin)
 admin.site.register(AmenityRoom, AmenityRoomAdmin)
 admin.site.register(MessAccount)
-admin.site.register(MessAccountHistory)
+admin.site.register(Passbook)
+admin.site.register(Due)
 admin.site.register(MessManager)
 admin.site.register(Complaint)
 admin.site.register(ComplaintRegister)
