@@ -6,8 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Student, Person, Hall, MessAccount, MessAccountHistory, Complaint
-from .forms import StudentAdmissionForm, MessAccountFormSet, ComplaintForm
+from .models import Student, Person, Hall, MessAccount, MessAccountHistory, Complaint, Warden
+from .forms import StudentAdmissionForm, MessAccountFormSet, ComplaintForm, WardenCreationForm, WardenAdmissionForm
 
 def getFreeRoom():
     halls = Hall.objects.all()
@@ -176,3 +176,35 @@ def newComplaints(request):
     else:
         form = ComplaintForm()
         return render(request, 'new-complaints.html', {'form': form})
+    
+@login_required(login_url = "main-login")
+def newWarden(request):
+    
+    if request.user.role != "admission":
+        return redirect("index")
+    
+    if request.method == 'POST':
+        form = WardenAdmissionForm(request.POST)
+        if form.is_valid():
+            
+            person = Person.objects.create_user(
+                username = form.cleaned_data['username'],
+                password = form.cleaned_data['password'],
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                email = form.cleaned_data['email'],
+                address = form.cleaned_data['address'],
+                telephoneNumber = form.cleaned_data['telephoneNumber'],                
+            )
+            
+            warden = Warden.objects.create(
+                person = person,
+                hall = form.cleaned_data['hall'],
+            )
+            
+            return redirect("admission-index")
+        else:
+            return render(request, 'new_warden.html', {'form': form})
+    else:
+        form = WardenAdmissionForm()
+        return render(request, 'new_warden.html', {'form': form})

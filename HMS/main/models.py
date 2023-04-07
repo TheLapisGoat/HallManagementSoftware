@@ -31,7 +31,10 @@ class Hall(models.Model):
     name = models.CharField("Name", max_length = 100, blank = False, primary_key = True)
     total_boarderrooms  = models.IntegerField("Total Boarder Rooms", default = 0, blank = False)
     total_amenityrooms  = models.IntegerField("Total Amenity Rooms", default = 0, blank = False)
-        
+    
+    def __str__(self):
+        return self.name
+          
     def getCurrentOccupancy(self):
         return self.boarderRooms.aggregate(total = Sum('currentOccupancy'))['total']
     
@@ -82,7 +85,8 @@ class Student(models.Model):
 class Warden(models.Model):
     person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "warden", primary_key = True)
     hall = models.OneToOneField(Hall, on_delete = models.PROTECT, related_name = "warden", blank = False, unique = True)
-    
+
+   
 
 # class Fees(models.Model):
 #     student = models.OneToOneField(Student, on_delete = models.CASCADE, related_name = "fees")
@@ -103,15 +107,7 @@ class MessAccountHistory(models.Model):
     mess_account = models.ForeignKey(MessAccount, on_delete=models.CASCADE, blank = False, related_name = "mess_account_history")
     last_update = models.DateField("Last Updated Date", blank = False)
     due = models.DecimalField("Mess Due", blank = False, default = 0, max_digits = 8, decimal_places = 2)
-    
-# class ATR(models.Model):
-#     name = models.CharField(max_length = 100)
-#     details = models.TextField()
-#     complaint = models.ForeignKey(Complaint, on_delete = models.CASCADE, related_name = "ATR")
 
-#     def change_status(self, status):
-#         self.status = status
-#         self.save() 
             
 class ComplaintRegister(models.Model):
     hall = models.OneToOneField(Hall, on_delete = models.CASCADE, related_name = "complaint_register", blank = False, primary_key = True)
@@ -135,19 +131,17 @@ class Complaint(models.Model):
     description = models.TextField()
     date = models.DateField()
     nameagainst = models.CharField(max_length = 100)
-    status = models.CharField(max_length = 100, default = "Pending")
-    
+    status = models.CharField(max_length = 100, default = "Pending")    
     #image = models.ImageField()
-    
-    # def save(self, *args, **kwargs):
-    #     if self.pk is None:
-    #         super(Complaint, self).save(*args, **kwargs)
-    #         self.save()
-    #         self.complaintregister.save()
-    #     else:
-    #         super(Complaint, self).save(*args, **kwargs)
-    #         self.complaintregister.save()
-            
+
+class ATR(models.Model):
+    name = models.CharField(max_length = 100)
+    details = models.TextField()
+    complaint = models.OneToOneField(Complaint, on_delete = models.CASCADE, related_name = "ATR", blank = False, primary_key = True)
+
+    def change_status(self, status):
+        self.status = status
+        self.save()             
 
 # class HallBudget(models.Model):
 #     hall = models.OneToOneField(Hall, on_delete = models.CASCADE, related_name = "hallBudget")

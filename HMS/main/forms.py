@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
-from .models import Person, MessAccount, Student, Hall, BoarderRoom, Complaint
+from .models import Person, MessAccount, Student, Hall, BoarderRoom, Complaint, Warden
 from django.core.validators import MinValueValidator
 
 class PersonCreationForm(UserCreationForm):
@@ -145,3 +145,93 @@ class ComplaintForm(forms.Form):
     def clean(self):
         cleaned_data = super(forms.Form, self).clean()
         return cleaned_data
+    
+class WardenAdmissionForm(forms.Form):
+    username = forms.CharField(max_length = 150, required = True)
+    password = forms.CharField(widget=forms.PasswordInput, required = True)
+    confirm_password = forms.CharField(widget=forms.PasswordInput, required = True)
+    first_name = forms.CharField(max_length = 150, required = True)
+    last_name = forms.CharField(max_length = 150, required = True)
+    email = forms.EmailField(required = True)
+    address = forms.CharField(widget = forms.Textarea, required = True)
+    telephoneNumber = forms.IntegerField(required = True)
+    hall = forms.ModelChoiceField(queryset = Hall.objects.all(), required = True)
+    
+    def clean(self):
+        cleaned_data = super(forms.Form, self).clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+        
+        if password != confirm_password:
+            self.add_error('confirm_password', "Password does not match")
+
+class WardenChangeForm(forms.ModelForm):    
+    username = forms.CharField(max_length = 150)
+    first_name = forms.CharField(max_length = 150)
+    last_name = forms.CharField(max_length = 150)
+    email = forms.EmailField()
+    address = forms.CharField(widget = forms.Textarea)
+    telephoneNumber = forms.IntegerField()
+    
+    class Meta:
+        model = Warden
+        fields = ('hall',)
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance:
+            person = self.instance.person
+            self.fields['username'].initial = person.username
+            self.fields['first_name'].initial = person.first_name
+            self.fields['last_name'].initial = person.last_name
+            self.fields['email'].initial = person.email
+            self.fields['address'].initial = person.address
+            self.fields['telephoneNumber'].initial = person.telephoneNumber
+            self.fields['hall'].initial = self.instance.hall
+    
+    def save(self, commit=True):
+        warden = super().save(commit=False)
+        person = warden.person
+        person.username = self.cleaned_data['username']
+        person.address = self.cleaned_data['address']
+        person.first_name = self.cleaned_data['first_name']
+        person.last_name = self.cleaned_data['last_name']
+        person.email = self.cleaned_data['email']
+        person.telephoneNumber = self.cleaned_data['telephoneNumber']
+        person.save()
+        warden.hall = self.cleaned_data['hall']
+        if commit:
+            warden.save()
+        return warden
+    
+class WardenCreationForm(forms.ModelForm):
+    
+    username = forms.CharField(max_length = 150, required = True)
+    password = forms.CharField(widget=forms.PasswordInput, required = True)
+    confirm_password = forms.CharField(widget=forms.PasswordInput, required = True)
+    first_name = forms.CharField(max_length = 150, required = True)
+    last_name = forms.CharField(max_length = 150, required = True)
+    email = forms.EmailField(required = True)
+    address = forms.CharField(widget = forms.Textarea, required = True)
+    telephoneNumber = forms.IntegerField(required = True)
+    hall = forms.ModelChoiceField(queryset = Hall.objects.all(), required = True)
+    
+    class Meta:
+        model = Warden
+        fields = '__all__'
+        
+    def save(self, commit=True):
+        person = Person.objects.create_user(
+                username = self.cleaned_data['username'],
+                password = self.cleaned_data['password'],
+                first_name=self.cleaned_data['first_name'],
+                last_name=self.cleaned_data['last_name'],
+                email = self.cleaned_data['email'],
+                address = self.cleaned_data['address'],
+                telephoneNumber = self.cleaned_data['telephoneNumber'],
+            )
+        warden = super().save(commit=False)
+        warden.person = person
+        if commit:
+            warden.save()
+        return warden

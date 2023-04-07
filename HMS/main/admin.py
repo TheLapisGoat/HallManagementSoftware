@@ -1,11 +1,11 @@
 from django.contrib import admin
-from .models import Person, Student, Hall, BoarderRoom, MessAccount, MessManager, MessAccountHistory, AmenityRoom, Complaint, ComplaintRegister
+from .models import Person, Student, Hall, BoarderRoom, MessAccount, MessManager, MessAccountHistory, AmenityRoom, Complaint, ComplaintRegister, Warden
 # Register your models here.
 
 from django.contrib.auth.admin import UserAdmin
 from django.shortcuts import redirect
 from django.contrib.admin import AdminSite, ModelAdmin
-from .forms import PersonCreationForm, PersonChangeForm, StudentCreationForm, StudentChangeForm
+from .forms import PersonCreationForm, PersonChangeForm, StudentCreationForm, StudentChangeForm, WardenCreationForm
 
 class PersonAdmin(UserAdmin):
     add_form = PersonCreationForm
@@ -75,6 +75,11 @@ class AmenityRoomAdmin(ModelAdmin):
         return obj.hall.name
     name.short_description = "Hall Name"
     list_display = ('name', 'roomNumber', 'rent',)  
+
+class WardenAdmin(ModelAdmin):
+    model = Warden
+    add_form = WardenCreationForm
+    list_display = ('person', 'hall')
     
 class HallAdmin(ModelAdmin):
     model = Hall
@@ -99,6 +104,7 @@ admin.site.register(MessAccountHistory)
 admin.site.register(MessManager)
 admin.site.register(Complaint)
 admin.site.register(ComplaintRegister)
+admin.site.register(Warden,WardenAdmin)
 
 class HMCAdmin(AdminSite):
     site_header = "HMC Admin Area"

@@ -17,4 +17,5 @@ urlpatterns = [
     path("home/dues", views.dues, name = "dues-student"),
     path("home/complaints", views.complaints, name = "complaints-student"),
     path("home/newcomplaints", views.newComplaints, name = "newcomplaints-student"),
+    path("home/newwarden", views.newWarden, name = "newwarden"),
 ]
