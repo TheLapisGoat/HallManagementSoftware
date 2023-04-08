@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
-from .models import Person, MessAccount, Student, Hall, BoarderRoom, Complaint, Warden, HallEmployeeLeave, HallEmployee
+from .models import Person, MessAccount, Student, Hall, BoarderRoom, Complaint, Warden, HallEmployeeLeave, HallEmployee, PettyExpense
 from django.core.validators import MinValueValidator, MaxValueValidator
 from phonenumber_field.formfields import PhoneNumberField
 
@@ -297,3 +297,9 @@ class HallEmployeeEditForm(forms.ModelForm):
             self.fields["name"].initial = self.instance.name
             self.fields["job"].initial = self.instance.job
             self.fields["salary"].initial = self.instance.salary
+            
+class PettyExpenseForm(forms.ModelForm):
+    
+    class Meta:
+        model = PettyExpense
+        fields = ['demand', 'description']

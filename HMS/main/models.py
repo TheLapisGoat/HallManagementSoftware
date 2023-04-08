@@ -8,6 +8,10 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 class Person(AbstractUser, PermissionsMixin):
     
+    first_name = models.CharField("first name", max_length=150, blank=False)
+    last_name = models.CharField("last name", max_length=150, blank=False)
+    email = models.EmailField("email address", blank=False)
+    
     ROLES = [
         ('student', 'Student'),
         ('warden', 'Warden'),
@@ -174,40 +178,24 @@ class ATR(models.Model):
         self.status = status
         self.save()             
 
-# class HallBudget(models.Model):
-#     hall = models.OneToOneField(Hall, on_delete = models.CASCADE, related_name = "hallBudget")
-#     #allocations = models.ForeignKey(Allocation, on_delete=models.PROTECT)
-#     #hallPhoto = models.ImageField()
-#     # def __str__(self):
-#     #     return self.allocations #dont know what to return here
-#     # def get_total(self):
-#     #     return - self.expenses - self.pettyexpenses + self.allocations
-#     # def get_petty_expenses(self):
-#     #     return self.pettyexpenses
-#     # def get_allocations(self):
-#     #     return self.allocations  
+class HallPassbook(models.Model):
+    hall = models.OneToOneField(Hall, on_delete = models.CASCADE, related_name = "passbook", blank = False, primary_key = True, unique = True)
 
-# class Expense(models.Model):        # change expense-hallbudget relation to aggregation
-#     name = models.CharField(max_length = 100)
-#     cost = models.FloatField()
-#     hallbudget = models.ForeignKey(HallBudget, on_delete=models.CASCADE, related_name = "expenses") 
-#     def __str__(self):
-#         return self.name
-   
-#     def change_value(self, value):
-#         self.cost = value
-#         self.save()
-        
-# class PettyExpense(models.Model):        # change expense-hallbudget relation to aggregation
-#     name = models.CharField(max_length = 100)
-#     cost = models.FloatField()
-#     hallbudget = models.ForeignKey(HallBudget, on_delete=models.CASCADE, related_name = "pettyexpenses") 
-#     def __str__(self):
-#         return self.name
-   
-#     def change_value(self, value):
-#         self.cost = value
-#         self.save()
+class Expense(models.Model):
+    
+    timestamp = models.DateTimeField("Timestamp", blank = False, auto_now = True)
+    demand = models.DecimalField("Demand", blank = False, default = 0, max_digits = 8, decimal_places = 2)
+    class Meta:
+        abstract = True
+    
+class PettyExpense(Expense):
+    description = models.CharField("Description", max_length = 100, blank = False)
+    passbook = models.ForeignKey(HallPassbook, on_delete = models.CASCADE, related_name = "pettyexpenses", blank = False)
+    
+class SalaryExpense(Expense):
+    name = models.CharField("Name", max_length = 100, blank = False)
+    job = models.CharField("Job", max_length = 100, blank = False)
+    passbook = models.ForeignKey(HallPassbook, on_delete = models.CASCADE, related_name = "salaryexpenses", blank = False)
         
 
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Person, Student, Hall, BoarderRoom, MessAccount, MessManager, Passbook, Due, AmenityRoom, Complaint, ComplaintRegister, Warden, HallClerk, HallEmployee, HallEmployeeLeave, UserPayment
+from .models import Person, Student, Hall, BoarderRoom, MessAccount, MessManager, Passbook, Due, AmenityRoom, Complaint, ComplaintRegister, Warden, HallClerk, HallEmployee, HallEmployeeLeave, UserPayment, HallPassbook, PettyExpense, SalaryExpense
 # Register your models here.
 
 from django.contrib.auth.admin import UserAdmin
@@ -110,5 +110,8 @@ admin.site.register(HallClerk)
 admin.site.register(HallEmployee)
 admin.site.register(HallEmployeeLeave)
 admin.site.register(UserPayment)
+admin.site.register(HallPassbook)
+admin.site.register(PettyExpense)
+admin.site.register(SalaryExpense)
 
 admin.site.site_header = 'Hall Management System Administration'

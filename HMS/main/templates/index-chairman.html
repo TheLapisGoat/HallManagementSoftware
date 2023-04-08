@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>{{ hall.name }}</title>
+	<title>HMC Chairman</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
@@ -53,17 +53,10 @@
 </head>
 <body>
 	<div class="container">
-		<h1>{{ hall.name }}</h1>
+		<h1>HMC Chairman</h1>
 		<p>Current occupancy: {{ currentOccupancy }}</p>
 		<p>Max occupancy: {{ maxOccupancy }}</p>
-		<div>
-	    <a href="{% url 'calculate-student-fees' %}" class="button">Calculate Student Fees</a>
-		<a href="{% url 'hallpassbook' %}" class="button">Hall Passbook</a>
-		</div>
-		<div>
-		<a href="{% url 'generate-salary-report' %}" class="button">Generate Monthly Salary Report</a>
-		<a href="{% url 'generate-salaries' %}" onclick="return confirm('Are you sure you want to generate the salaries? \n (This will replace existing salary dues from this month)')" class = 'button'>Generate Monthly Salaries</a>
-		</div>
+	    <a href="{% url 'mess-report' %}" class="button">Get Monthly Mess Report</a>
 		<a href="{% url 'main-logout' %}" class="button">Logout</a>
 	</div>
 </body>

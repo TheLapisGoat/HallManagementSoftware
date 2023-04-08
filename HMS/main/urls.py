@@ -30,4 +30,10 @@ urlpatterns = [
     path("warden/", views.wardenIndex, name = "warden-index"),
     path("warden/calculate_student_fees/", views.calculate_student_fees, name = "calculate-student-fees"),
     path("warden/<str:pk>/confirmstudentfees/", views.confirm_student_fees, name = "confirm-student-fees"),
+    path("hmcchairman/", views.chairmanIndex, name = "hmcchairman-index"),
+    path("hmcchairman/generate_mess_report", views.generate_mess_report, name = "mess-report"),
+    path('warden/generate_salaries/', views.generate_monthly_salary, name = "generate-salaries"),
+    path('warden/generate_salary_report/', views.generate_monthly_salary_report, name = "generate-salary-report"),
+    path('warden/hallpassbook/', views.hallpassbook, name = "hallpassbook"),
+    path('hallclerk/add_pettyexpense/', views.add_pettyexpense, name = "add-pettyexpense"),
 ]

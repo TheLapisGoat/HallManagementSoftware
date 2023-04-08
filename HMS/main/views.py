@@ -1,18 +1,25 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from datetime import date
+from datetime import datetime
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden, HallClerk, HallEmployee, HallEmployeeLeave, UserPayment, Payment, AmenityRoom
-from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm, HallEmployeeForm, HallEmployeeLeaveForm, HallEmployeeEditForm
+from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden, HallEmployee, UserPayment, Payment, AmenityRoom, MessManager, HallPassbook, PettyExpense, SalaryExpense
+from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm, HallEmployeeForm, HallEmployeeLeaveForm, HallEmployeeEditForm, PettyExpenseForm
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 import stripe
 import time
 from decimal import Decimal
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+import calendar
+
 
 def getFreeRoom():
     halls = Hall.objects.all()
@@ -45,6 +52,8 @@ def index(request):
         return redirect("admin-index")
     elif role == "warden":
         return redirect("warden-index")
+    elif role == "hmc_chairman":
+        return redirect("hmcchairman-index")
     else:
         return HttpResponse("Damn Boi")
     
@@ -244,8 +253,6 @@ def add_hallemployee_leave(request, pk):
         if form.is_valid():
             form.save()
             return redirect('leaves-hallemployees', pk=pk)
-        else:
-            return HttpResponse(form.errors.as_text())
     context = {'form': form, 'hallemployee': hallemployee}
     return render(request, 'add_leave_hallemployee.html', context)
 
@@ -270,6 +277,21 @@ def delete_hallemployee(request, pk):
     employee = get_object_or_404(HallEmployee, pk=pk)
     employee.delete()
     return redirect('hallclerk-index')
+
+@login_required(login_url = "main-login")
+def add_pettyexpense(request):
+    if request.user.role != "hall_clerk":
+        return redirect("index")
+    form = PettyExpenseForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            description = form.cleaned_data['description']
+            demand = form.cleaned_data['demand']
+            PettyExpense.objects.create(description = description, demand = demand, passbook = request.user.hall_clerk.hall.passbook)
+            return redirect('hallclerk-index')
+        
+    context = {'form': form}
+    return render(request, 'add_pettyexpense.html', context)
 
 @login_required(login_url = "main-login")
 def dues(request):
@@ -458,3 +480,158 @@ def confirm_student_fees(request, pk):
         Due.objects.create(passbook = passbook, demand = student.room.rent, type = 'boarderRoom')
     
     return redirect('index')
+
+@login_required(login_url = "main-login")
+def generate_monthly_salary(request):
+    if request.user.role != "warden":
+        return redirect("index")
+    
+    hall = request.user.warden.hall
+    employees = hall.hall_employees.all()
+    now = datetime.now()
+    days_in_month = calendar.monthrange(now.year, now.month)[1]
+    
+    for employee in employees:
+        salary = employee.salary
+        total_salary = (days_in_month - employee.leaves.filter(date__month = now.month).count()) * salary
+        salaryobject = SalaryExpense.objects.get(name = employee.name, job = employee.job, passbook = hall.passbook)
+        if salaryobject:
+            salaryobject.demand = Decimal(total_salary)
+        else:
+            SalaryExpense.objects.create(name = employee.name, job = employee.job, demand = Decimal(total_salary), passbook = hall.passbook)
+    
+    return redirect("index")
+
+@login_required(login_url = "main-login")
+def generate_monthly_salary_report(request):
+    if request.user.role != "warden":
+        return redirect("index")
+    
+    hall = request.user.warden.hall
+    rows = []
+    current_month = datetime.now().month
+    salaryexpenses = SalaryExpense.objects.filter(timestamp__month = current_month, passbook = request.user.warden.hall.passbook)
+    
+    for salaryexpense in salaryexpenses:
+        rows.append([salaryexpense.name, salaryexpense.job, salaryexpense.demand, ''])
+    
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="salaryreport.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=letter)
+    elements = []
+    
+    current_month = datetime.now().strftime("%B")
+    
+    title = Paragraph(f"<h3>{hall} - Monthly Salary Report - {current_month}</h3>", getSampleStyleSheet()["Title"])
+    elements.append(title)
+
+    table = Table(
+    [["Name", "Job", "Salary", "Signature"]] + rows,
+    colWidths=[2 * inch, 3 * inch, 1.5 * inch, 2 * inch],
+    )
+    
+    table.setStyle(TableStyle([
+        ("FONTNAME", (0, 0), (-1, -1), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 8),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0.1 * inch),
+        ("TOPPADDING", (0, 0), (-1, -1), 0.1 * inch),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0.1 * inch),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0.1 * inch),
+        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+        ("BOX", (0, 0), (-1, -1), 0.25, colors.black),
+        ("GRID", (0, 1), (-1, -1), 0.5, colors.black),
+    ]))
+    elements.append(table)
+
+    doc.build(elements)
+    return response
+
+@login_required(login_url = "main-login")
+def hallpassbook(request):
+    if request.user.role != "warden":
+        return redirect("index")
+
+    passbook = request.user.warden.hall.passbook
+    salaryexpenses = passbook.salaryexpenses.order_by('-timestamp')
+    pettyexpenses = passbook.pettyexpenses.order_by('-timestamp')
+    total_salary = salaryexpenses.aggregate(total=Sum('demand'))['total']
+    total_petty = pettyexpenses.aggregate(total=Sum('demand'))['total']
+
+    if total_salary is None:
+        total_salary = 0
+    if total_petty is None:
+        total_petty = 0
+        
+    context = {
+        'salaryexpenses': salaryexpenses,
+        'pettyexpenses': pettyexpenses,
+        'total_salaryexpenses': total_salary,
+        'total_pettyexpenses': total_petty,
+    }
+
+    return render(request, 'hallpassbook.html', context)
+
+@login_required(login_url = "main-login")
+def chairmanIndex(request):
+    if request.user.role != "hmc_chairman":
+        return redirect("index")
+    
+    currentOccupancy = 0
+    maxOccupancy = 0
+    halls = Hall.objects.all()
+    for hall in halls:
+        currentOccupancy += hall.getCurrentOccupancy()
+        maxOccupancy += hall.getMaxOccupancy()
+    
+    context = {'currentOccupancy': currentOccupancy, 'maxOccupancy': maxOccupancy}
+    return render(request, 'index-chairman.html', context)
+
+@login_required(login_url = "main-login")
+def generate_mess_report(request):
+    rows = []
+    mess_managers = MessManager.objects.all()
+    current_month = datetime.now().month
+    for manager in mess_managers:
+        students = manager.hall.students.all()
+        due = 0
+        for student in students:
+            mess_dues = student.passbook.dues.filter(type = 'mess', timestamp__month = current_month).aggregate(total = Sum('demand'))['total']     
+            due += mess_dues   
+        rows.append([manager.person.first_name, manager.hall.name, round(due, 2), ''])
+    
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=letter)
+    elements = []
+    
+    current_month = datetime.now().strftime("%B")
+    
+    title = Paragraph(f"<h3>Monthly Mess Report - {current_month} </h3>", getSampleStyleSheet()["Title"])
+    elements.append(title)
+
+    table = Table(
+    [["Mess Manager", "Hall Name", "Due Amount", "Signature"]] + rows,
+    colWidths=[2 * inch, 3 * inch, 1.5 * inch, 2 * inch],
+    )
+    
+    table.setStyle(TableStyle([
+        ("FONTNAME", (0, 0), (-1, -1), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, -1), 8),
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0.1 * inch),
+        ("TOPPADDING", (0, 0), (-1, -1), 0.1 * inch),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0.1 * inch),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0.1 * inch),
+        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+        ("BOX", (0, 0), (-1, -1), 0.25, colors.black),
+        ("GRID", (0, 1), (-1, -1), 0.5, colors.black),
+    ]))
+    elements.append(table)
+
+    doc.build(elements)
+    return response
