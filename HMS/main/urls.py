@@ -19,4 +19,7 @@ urlpatterns = [
     path("home/newwarden", views.newWarden, name = "newwarden"),
     path("passbook/", views.passbook, name = "passbook"),
     path("passbook/pay", views.pay, name = "pay"),
+    path("passbook/pay/success", views.payment_successful, name = "success"),
+    path("passbook/pay/cancel", views.payment_cancelled, name = "cancel"),
+    path("passbook/pay/stripe_webhook/", views.stripe_webhook, name = "stripe_webhook"),
 ]

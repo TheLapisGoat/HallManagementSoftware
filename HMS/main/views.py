@@ -6,8 +6,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden
+from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden, UserPayment, Payment
 from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+import stripe
+import time
+from decimal import Decimal
 
 def getFreeRoom():
     halls = Hall.objects.all()
@@ -70,11 +75,31 @@ def pay(request):
     if total_paid is not None and total_due is not None:
         total_due = total_due - total_paid
     
-    if total_due > 0:
+    if total_due:
+        stripe.api_key = settings.STRIPE_SECRET_KEY
         if request.method == 'POST':
             form = PaymentForm(total_due, request.POST)
             if form.is_valid():
-                return HttpResponse("hafljds")
+                checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[
+                {
+                    'price_data': {
+                        'currency': 'inr',
+                        'unit_amount': int(form.data['amount'])*100, # convert the price to cents
+                        'product_data': {
+                            'name': 'Fees',
+                        },
+                    },
+                    'quantity': 1,
+                },
+                ],
+                mode='payment',
+                customer_creation = 'always',
+                success_url=settings.REDIRECT_URL + '/passbook/pay/success?session_id={CHECKOUT_SESSION_ID}',
+                cancel_url=settings.REDIRECT_URL + '/passbook/pay/cancel',
+                )
+                return redirect(checkout_session.url, code=303)
             else:
                 return render(request, 'payment_form.html', {'form': form, 'total_due': total_due})
         else:
@@ -255,3 +280,45 @@ def newWarden(request):
     else:
         form = WardenAdmissionForm()
         return render(request, 'new_warden.html', {'form': form})
+    
+def payment_successful(request):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    checkout_session_id = request.GET.get('session_id', None)
+    session = stripe.checkout.Session.retrieve(checkout_session_id)
+    customer = stripe.Customer.retrieve(session.customer)
+    student = request.user.student
+    Payment.objects.create(passbook = student.passbook, fulfilled = Decimal(session.amount_total)/100)
+    user_payment = UserPayment.objects.create(student=student, stripe_checkout_id = checkout_session_id, payment_bool=True)
+    user_payment.save()
+    return render(request, 'payment_successful.html', {'customer': customer})
+
+def payment_cancelled(request):
+	stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
+	return render(request, 'user_payment/payment_cancelled.html')
+
+@csrf_exempt
+def stripe_webhook(request):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    time.sleep(10)
+    payload = request.body
+    signature_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, signature_header, settings.STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse(status=400)
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        session_id = event['data']['object']
+        time.sleep(15)
+        user_payment = UserPayment.objects.get(stripe_checkout_id=session_id)
+        # line_items = stripe.checkout.Session.list_line_items(session_id, limit=1)
+        user_payment.payment_bool = True
+        user_payment.save()
+    return HttpResponse(status=200)
