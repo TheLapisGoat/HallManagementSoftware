@@ -7,7 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.db.models import Sum
 from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden, HallClerk, HallEmployee, HallEmployeeLeave, UserPayment, Payment
-from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm, HallEmployeeForm, HallEmployeeLeaveForm
+from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm, HallEmployeeForm, HallEmployeeLeaveForm, HallEmployeeEditForm
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 import stripe
@@ -43,6 +43,8 @@ def index(request):
         return redirect("hallclerk-index")
     elif role == "admin":
         return redirect("admin-index")
+    elif role == "warden":
+        return redirect("warden-index")
     else:
         return HttpResponse("Damn Boi")
     
@@ -111,7 +113,8 @@ def pay(request):
 
         return render(request, 'payment_form.html', {'form': form, 'total_due': total_due})
     else:
-        return HttpResponse("You have no dues")
+        messages.add_message(request, messages.INFO, "You have no dues left")
+        return redirect("passbook")
 
 @login_required(login_url = "main-login")
 def admissionIndex(request):
@@ -209,10 +212,16 @@ def edit_hallemployee(request, pk):
     if request.user.role != "hall_clerk":
         return redirect("index")
     employee = get_object_or_404(HallEmployee, pk = pk)
-    form = HallEmployeeForm(request.POST or None, instance=employee)
-    if form.is_valid():
-        form.save()
-        return redirect('hallclerk-index')
+    
+    if request.method == "POST":
+        form = HallEmployeeEditForm(request.POST, instance = employee)
+        if form.is_valid():
+            form.save()
+            return redirect('hallclerk-index')
+        else:
+            return render(request, 'edit_hallemployee.html', {'form': form, 'employee': employee})
+        
+    form = HallEmployeeEditForm(instance = employee)
     return render(request, 'edit_hallemployee.html', {'form': form, 'employee': employee})
 
 @login_required(login_url = "main-login")
@@ -362,8 +371,8 @@ def payment_successful(request):
     return render(request, 'payment_successful.html', {'customer': customer})
 
 def payment_cancelled(request):
-	stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
-	return render(request, 'user_payment/payment_cancelled.html')
+	stripe.api_key = settings.STRIPE_SECRET_KEY
+	return render(request, 'payment_cancelled.html')
 
 @csrf_exempt
 def stripe_webhook(request):
@@ -391,3 +400,14 @@ def stripe_webhook(request):
         user_payment.payment_bool = True
         user_payment.save()
     return HttpResponse(status=200)
+
+@login_required(login_url = "main-login")
+def wardenIndex(request):
+    if request.user.role != "warden":
+        return redirect("index")
+    hall = request.user.warden.hall
+    
+    currentOccupancy = hall.getCurrentOccupancy()
+    maxOccupancy = hall.getMaxOccupancy()
+    
+    # return render(request, 'index-admission.html', {'students': students})

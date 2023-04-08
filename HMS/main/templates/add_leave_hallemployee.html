@@ -1,15 +1,71 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>Add Leave</title>
-</head>
-<body>
-	<h1>Add Leave</h1>
-	<form method="post">
-		{% csrf_token %}
-		<label for="id_date">Date:</label>
-		<input type="date" name="date" required><br><br>
-		<button type="submit">Add Leave</button>
-	</form>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Add Leave</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        background-color: #f2f2f2;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+      }
+      h1 {
+        color: #555;
+        font-size: 32px;
+        margin: 0;
+        padding: 20px 0;
+        text-align: center;
+      }
+      form {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin: 0 auto;
+        max-width: 400px;
+        padding: 20px;
+      }
+      label {
+        display: block;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      input[type="date"] {
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-sizing: border-box;
+        font-size: 16px;
+        padding: 10px;
+        width: 100%;
+      }
+      button[type="submit"] {
+        background-color: #4CAF50;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 18px;
+        margin-top: 20px;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease-in-out;
+      }
+      button[type="submit"]:hover {
+        background-color: #3e8e41;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Add Leave</h1>
+    <form method="post">
+      {% csrf_token %}
+      <label for="id_date">Date:</label>
+      <input type="date" name="date" required><br><br>
+      <button type="submit">Add Leave</button>
+    </form>
+  </body>
 </html>

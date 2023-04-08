@@ -3,16 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <title>Pay Fees</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        h1 {
+            margin-top: 50px;
+        }
+        form {
+            display: inline-block;
+            margin-top: 50px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 200px;
+            margin-bottom: 20px;
+        }
+        input[type="submit"], button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        input[type="submit"]:hover, button:hover {
+            background-color: #3e8e41;
+        }
+    </style>
 </head>
 <body>
     <h1>Pay Fees</h1>
     <p>Total Due: {{ total_due }}</p>
-    <form method="POST">
+    <form id="pay-form" method="POST">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Pay">
-        <button type="button" onclick="document.getElementById('id_amount').value='{{ total_due }}'">Pay Full Amount</button>
+        <button type="button" onclick="payFullAmount()">Pay Full Amount</button>
     </form>
-    
+    <script>
+        function payFullAmount() {
+            var amountField = document.getElementById('id_amount');
+            amountField.value = '{{ total_due }}';
+            document.getElementById('pay-form').submit();
+        }
+    </script>
 </body>
 </html>

@@ -2,10 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Hall Employee</title>
+    <title>Create New Hall Employee</title>
+    <style>
+        body {
+            background-color: #F0FFF0;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+            color: #008000;
+        }
+        form {
+            margin: 0 auto;
+            width: 50%;
+        }
+        input[type="submit"] {
+            background-color: #008000;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        input[type="submit"]:hover {
+            background-color: #006400;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #008000;
+        }
+        input[type="text"], input[type="password"], select {
+            padding: 5px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Add Hall Employee</h1>
+    <h1>Create New Hall Employee</h1>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}

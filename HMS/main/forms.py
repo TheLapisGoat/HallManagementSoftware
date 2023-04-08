@@ -282,3 +282,18 @@ class HallEmployeeForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["hall"].initial = hall
         self.fields["hall"].disabled = True
+        
+class HallEmployeeEditForm(forms.ModelForm):
+    
+    class Meta:
+        model = HallEmployee
+        fields = ['name', 'job', 'salary', 'hall']
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance:
+            self.fields["hall"].initial = self.instance.hall
+            self.fields["hall"].disabled = True
+            self.fields["name"].initial = self.instance.name
+            self.fields["job"].initial = self.instance.job
+            self.fields["salary"].initial = self.instance.salary

@@ -112,17 +112,6 @@ class Warden(models.Model):
     person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "warden", primary_key = True)
     hall = models.OneToOneField(Hall, on_delete = models.PROTECT, related_name = "warden", blank = False, unique = True)
 
-   
-
-# class Fees(models.Model):
-#     student = models.OneToOneField(Student, on_delete = models.CASCADE, related_name = "fees")
-#     amenityFees = models.FloatField()
-#     roomFees = models.FloatField()
-#     def getAmenityFees(self):
-#         return self.amenityFees
-#     def getRoomFees(self):
-#         return self.roomFees
-
 class MessAccount(models.Model):
     student = models.OneToOneField(Student, on_delete = models.CASCADE, related_name = "messAccount", blank = False, primary_key = True, unique = True)
     due = models.DecimalField("Mess Due", blank = False, default = 0, max_digits = 8, decimal_places = 2)
@@ -233,14 +222,6 @@ class ATR(models.Model):
 #     def change_value(self, value):
 #         self.allocated_grant = value
 #         self.save()
-
-# class Leave(models.Model):
-#     hall= models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "leaves")
-#     person= models.ForeignKey(Person, on_delete = models.CASCADE, related_name = "leaves")
-#     approved = models.BooleanField(default = False)
-#     description = models.TextField()
-#     start_date = models.DateField()
-#     end_date = models.DateField()
 
 class UserPayment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)

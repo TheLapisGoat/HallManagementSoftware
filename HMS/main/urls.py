@@ -29,4 +29,5 @@ urlpatterns = [
     path("passbook/pay/success", views.payment_successful, name = "success"),
     path("passbook/pay/cancel", views.payment_cancelled, name = "cancel"),
     path("passbook/pay/stripe_webhook/", views.stripe_webhook, name = "stripe_webhook"),
+    path("warden/", views.wardenIndex, name = "warden-index"),
 ]

@@ -2,6 +2,143 @@
 <html>
 <head>
 	<title>Passbook</title>
+	<style>
+		<style>
+			body {
+			  margin: 0;
+			  padding: 0;
+			  font-family: Arial, sans-serif;
+			  background-color: #f1f1f1;
+			  text-align: center;
+			  color: #333;
+			}
+			
+			h1 {
+			  font-weight: bold;
+			  color: #008000;
+			  margin-top: 20px;
+			  text-align: center;
+			}
+			
+			h2 {
+				font-weight: bold;
+				color: #008000;
+				margin-top: 20px;
+				text-align: center;
+			}
+			
+			p {
+				text-align: center;
+				margin-top: 20px;
+			}
+
+			.button {
+				background-color: #008000;
+				border: none;
+				border-radius: 4px;
+				color: #fff;
+				cursor: pointer;
+				font-size: 16px;
+				font-weight: bold;
+				padding: 12px 24px;
+				text-align: center;
+				text-decoration: none;
+			  }
+			
+			.button:hover {
+				background-color: #006400;
+			}
+
+			.container {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			
+			table {
+			  margin: 20px auto;
+			  border-collapse: collapse;
+			  width: 80%;
+			  max-width: 1200px;
+			  text-align: center;
+			  background-color: #fff;
+			  border: 2px solid #008000;
+			  border-radius: 5px;
+			}
+			
+			th, td {
+			  padding: 10px;
+			  border: 1px solid #008000;
+			}
+			
+			.message {
+                color: #333;
+                font-size: 16px;
+                text-align: center;
+                margin-top: 20px;
+            }
+			
+			th {
+			  background-color: #008000;
+			  color: #fff;
+			  font-size: 20px;
+			  font-weight: bold;
+			  text-align: center;
+			}
+			
+			input[type=submit] {
+			  display: block;
+			  margin: 20px auto;
+			  padding: 10px 20px;
+			  font-size: 18px;
+			  font-weight: bold;
+			  text-align: center;
+			  color: #fff;
+			  background-color: #008000;
+			  border: none;
+			  border-radius: 5px;
+			  cursor: pointer;
+			  transition: background-color 0.3s ease-in-out;
+			}
+			
+			input[type=submit]:hover {
+			  background-color: #005000;
+			}
+			
+			form p {
+			  text-align: center;
+			  margin: 0;
+			}
+			
+			.errorlist {
+			  color: #f00;
+			  font-weight: bold;
+			  margin: 0;
+			  padding: 0;
+			  text-align: center;
+			}
+			
+			.browsehappy {
+			  padding: 10px 0;
+			  background-color: #008000;
+			  color: #fff;
+			  text-align: center;
+			}
+			
+			@media (max-width: 768px) {
+			  a, input[type=submit] {
+				display: block;
+				margin: 10px auto;
+				padding: 10px 20px;
+				font-size: 16px;
+			  }
+			
+			  table {
+				width: 100%;
+				margin: 10px auto;
+			  }
+			}
+	</style>
 </head>
 <body>
 	<h1>Passbook</h1>
@@ -52,10 +189,20 @@
 			{% endif %}
 		</tbody>
 	</table>
-	
-	<p>Total dues: {{ total_due }}</p>
-	<p>Total paid: {{ total_paid }}</p>
-    <a href = "{% url 'pay' %}">Pay Fees</a>
+	<div class = "container">
+		<p>Total dues: {{ total_due }}</p>
+		<p>Total paid: {{ total_paid }}</p>
+		<div>
+    		<a href="{% url 'pay' %}" class = "button">Pay Fees</a>
+			<a href="{% url 'index' %}" class = "button">Home</a>
+		</div>
+		<div class="message">
+            {%if messages%}
+                {%for message in messages%}
+                    {{message}}
+                {%endfor%}
+            {%endif%}
+        </div>
+	</div>
 </body>
 </html>
-
