@@ -12,7 +12,8 @@ class Person(AbstractUser, PermissionsMixin):
         ('hmc_chairman', 'HMC Chairman'),
         ('mess_manager', 'Mess Manager'),
         ('admin', 'Administrator'),
-        ('admission', 'AdmissionUnit')
+        ('admission', 'Admission Unit'),
+        ('hall_clerk', 'Hall Clerk')
     ]
     
     role = models.CharField("Role", max_length=40, choices=ROLES, default='student', blank = False)
@@ -40,7 +41,29 @@ class Hall(models.Model):
     
     def getMaxOccupancy(self):
         return self.boarderRooms.aggregate(total = Sum('maxOccupancy'))['total']
-            
+    
+class HallClerk(models.Model):
+    person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "hall_clerk", primary_key = True, blank = False, unique = True)
+    hall = models.OneToOneField(Hall, on_delete = models.PROTECT, related_name = "hall_clerk", blank = False, unique = True)
+    
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            super(HallClerk, self).save(*args, **kwargs)
+            self.person.role = 'hall_clerk'
+        else:
+            self.person.role = 'hall_clerk'
+            super(HallClerk, self).save(*args, **kwargs)
+
+class HallEmployee(models.Model):
+    name = models.CharField("Name", max_length = 100, blank = False)
+    hall = models.ForeignKey(Hall, on_delete = models.PROTECT, related_name = "hall_employees", blank = False)
+    job = models.CharField("Job", max_length = 100, blank = False)
+    salary = models.DecimalField("Salary", default = 0, blank = False, max_digits = 8, decimal_places = 2)
+    
+class HallEmployeeLeave(models.Model):
+    hallemployee = models.ForeignKey(HallEmployee, on_delete = models.CASCADE, related_name = "leaves", blank = False)
+    date = models.DateField("Date", blank = False)
+
 class MessManager(models.Model):
     person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "mess_manager", primary_key = True, blank = False, unique = True)
     hall = models.OneToOneField(Hall, on_delete = models.PROTECT, related_name = "mess_maanger", blank = False, unique = True)

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Add Leave</title>
+</head>
+<body>
+	<h1>Add Leave</h1>
+	<form method="post">
+		{% csrf_token %}
+		<label for="id_date">Date:</label>
+		<input type="date" name="date" required><br><br>
+		<button type="submit">Add Leave</button>
+	</form>
+</body>
+</html>

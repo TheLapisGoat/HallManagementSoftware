@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
-from .models import Person, MessAccount, Student, Hall, BoarderRoom, Complaint, Warden
+from .models import Person, MessAccount, Student, Hall, BoarderRoom, Complaint, Warden, HallEmployeeLeave, HallEmployee
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 class PersonCreationForm(UserCreationForm):
@@ -243,3 +243,27 @@ class WardenCreationForm(forms.ModelForm):
         if commit:
             warden.save()
         return warden
+    
+class HallEmployeeLeaveForm(forms.ModelForm):
+    class Meta:
+        model = HallEmployeeLeave
+        fields = ['hallemployee', 'date']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+        }
+    
+    def __init__(self, hallemployee, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["hallemployee"].initial = hallemployee
+        self.fields["hallemployee"].disabled = True
+
+class HallEmployeeForm(forms.ModelForm):
+    
+    class Meta:
+        model = HallEmployee
+        fields = ['name', 'job', 'salary', 'hall']
+        
+    def __init__(self, hall, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["hall"].initial = hall
+        self.fields["hall"].disabled = True

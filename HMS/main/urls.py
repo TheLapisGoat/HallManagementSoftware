@@ -19,4 +19,10 @@ urlpatterns = [
     path("home/newwarden", views.newWarden, name = "newwarden"),
     path("passbook/", views.passbook, name = "passbook"),
     path("passbook/pay", views.pay, name = "pay"),
+    path("hallclerk/", views.hallClerkIndex, name = "hallclerk-index"),
+    path('hallclerk/<int:pk>/edit/', views.edit_hallemployee, name = "edit-hallemployee"),
+    path('hallclerk/<int:pk>/leaves/', views.leaves_hallemployee, name='leaves-hallemployees'),
+    path('hallclerk/<int:pk>/add_leave/', views.add_hallemployee_leave, name='add-leave-hallemployee'),
+    path('hallclerk/add_hallemployee/', views.add_hallemployee, name='add-hallemployee'),
+    path('hallclerk/<int:pk>/delete/', views.delete_hallemployee, name='delete-hallemployee'),
 ]

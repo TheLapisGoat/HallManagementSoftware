@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from datetime import date
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -6,8 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden
-from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm
+from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden, HallClerk, HallEmployee, HallEmployeeLeave
+from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm, HallEmployeeForm, HallEmployeeLeaveForm
 
 def getFreeRoom():
     halls = Hall.objects.all()
@@ -34,6 +34,8 @@ def index(request):
         return render(request, "index-student.html",context)
     elif role == "mess_manager":
         return redirect("messmanager-index")
+    elif role == "hall_clerk":
+        return redirect("hallclerk-index")
     else:
         return HttpResponse("Damn Boi")
     
@@ -70,7 +72,7 @@ def pay(request):
     if total_paid is not None and total_due is not None:
         total_due = total_due - total_paid
     
-    if total_due > 0:
+    if total_due is not None and total_due > 0:
         if request.method == 'POST':
             form = PaymentForm(total_due, request.POST)
             if form.is_valid():
@@ -166,6 +168,70 @@ def manageMessAccounts(request):
         
     return render(request, 'update-mess-accounts.html', {"formset": formset})
         
+@login_required(login_url = "main-login")
+def hallClerkIndex(request):
+    if request.user.role != "hall_clerk":
+        return redirect("index")
+    
+    employees = HallEmployee.objects.filter(hall = request.user.hall_clerk.hall)
+    return render(request, 'index-hallclerk.html', {'employees': employees})
+    
+@login_required(login_url = "main-login")
+def edit_hallemployee(request, pk):
+    if request.user.role != "hall_clerk":
+        return redirect("index")
+    employee = get_object_or_404(HallEmployee, pk = pk)
+    form = HallEmployeeForm(request.POST or None, instance=employee)
+    if form.is_valid():
+        form.save()
+        return redirect('hallclerk-index')
+    return render(request, 'edit_hallemployee.html', {'form': form, 'employee': employee})
+
+@login_required(login_url = "main-login")
+def leaves_hallemployee(request, pk):
+    if request.user.role != "hall_clerk":
+        return redirect("index")
+    employee = get_object_or_404(HallEmployee, pk=pk)
+    leaves = employee.leaves.all()
+    return render(request, 'leaves_hallemployee.html', {'employee': employee, 'leaves': leaves})
+
+@login_required(login_url = "main-login")
+def add_hallemployee_leave(request, pk):
+    if request.user.role != "hall_clerk":
+        return redirect("index")
+    hallemployee = HallEmployee.objects.get(pk=pk)
+    form = HallEmployeeLeaveForm(hallemployee, request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('leaves-hallemployees', pk=pk)
+        else:
+            return HttpResponse(form.errors.as_text())
+    context = {'form': form, 'hallemployee': hallemployee}
+    return render(request, 'add_leave_hallemployee.html', context)
+
+@login_required(login_url="main-login")
+def add_hallemployee(request):
+    if request.user.role != "hall_clerk":
+        return redirect("index")
+    
+    if request.method == 'POST':
+        form = HallEmployeeForm(request.user.hall_clerk.hall, request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('hallclerk-index')
+    else:
+        form = HallEmployeeForm(request.user.hall_clerk.hall)
+    return render(request, 'add_hallemployee.html', {'form': form})
+
+@login_required(login_url = "main-login")
+def delete_hallemployee(request, pk):
+    if request.user.role != "hall_clerk":
+        return redirect("index")
+    employee = get_object_or_404(HallEmployee, pk=pk)
+    employee.delete()
+    return redirect('hallclerk-index')
+
 @login_required(login_url = "main-login")
 def dues(request):
     if request.user.role != "student":
