@@ -32,13 +32,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "phonenumber_field",
+    "main.apps.MainConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "main.apps.MainConfig",
 ]
 
 MIDDLEWARE = [
@@ -139,3 +140,5 @@ STRIPE_WEBHOOK_SECRET = ""
 REDIRECT_URL = "http://localhost:8000"
 
 PRODUCT_PRICE = "price_1MuUFLSBcrzVnIxoSE2lm5Ot"
+LOGOUT_REDIRECT_URL = "main-login"
+

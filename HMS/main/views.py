@@ -41,6 +41,8 @@ def index(request):
         return redirect("messmanager-index")
     elif role == "hall_clerk":
         return redirect("hallclerk-index")
+    elif role == "admin":
+        return redirect("admin-index")
     else:
         return HttpResponse("Damn Boi")
     
@@ -115,7 +117,17 @@ def pay(request):
 def admissionIndex(request):
     if request.user.role != "admission":
         return redirect("index")
-    return render(request, 'index-admission.html')
+    students = Student.objects.all()
+    
+    rollNumber_filter = request.GET.get('filter_rollNumber', None)
+    hall_filter = request.GET.get('filter_hall', None)
+    
+    if rollNumber_filter:
+        students = students.filter(rollNumber__icontains = rollNumber_filter)
+    if hall_filter:
+        students = students.filter(hall__name__icontains = hall_filter)
+    
+    return render(request, 'index-admission.html', {'students': students})
 
 @login_required(login_url = "main-login")
 def newAdmission(request):
@@ -126,8 +138,8 @@ def newAdmission(request):
     if request.method == 'POST':
         form = StudentAdmissionForm(request.POST)
         if form.is_valid():
-            
             room = getFreeRoom()
+            
             if room is None:
                 form.add_error(field = None, error = "Error! There is no space left in the institute")
                 return render(request, 'student_admission.html', {'form': form})
@@ -169,15 +181,6 @@ def manageMessAccounts(request):
     
     hall = request.user.mess_manager.hall
     students = Student.objects.filter(hall = hall)
-    current_date = date.today()
-    
-    for student in students:
-        mess_account = student.messAccount
-        if current_date.month != mess_account.last_update.month or current_date.year != mess_account.last_update.year:
-            Due.objects.create(demand = mess_account.due, type = "mess", passbook = student.passbook)
-            mess_account.last_update = current_date
-            mess_account.due = 0
-            mess_account.save()
     
     if request.method == "POST":
         formset = MessAccountFormSet(request.POST)
