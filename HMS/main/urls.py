@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
 from . import views
-from .admin import hmc_admin
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -10,7 +9,6 @@ urlpatterns = [
     path("", views.index, name = "index"),
     path("login/", views.loginUser, name="main-login"),
     path("logout/", views.logoutUser, name = "main-logout"),
-    path("hmcadmin", hmc_admin.urls),
     path("admission/", views.admissionIndex, name = "admission-index"),
     path("admission/new_admission/", views.newAdmission, name = "newadmission"),
     path("messmanager/", views.messManagerIndex, name = "messmanager-index"),
@@ -30,4 +28,6 @@ urlpatterns = [
     path("passbook/pay/cancel", views.payment_cancelled, name = "cancel"),
     path("passbook/pay/stripe_webhook/", views.stripe_webhook, name = "stripe_webhook"),
     path("warden/", views.wardenIndex, name = "warden-index"),
+    path("warden/calculate_student_fees/", views.calculate_student_fees, name = "calculate-student-fees"),
+    path("warden/<str:pk>/confirmstudentfees/", views.confirm_student_fees, name = "confirm-student-fees"),
 ]

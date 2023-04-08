@@ -111,10 +111,4 @@ admin.site.register(HallEmployee)
 admin.site.register(HallEmployeeLeave)
 admin.site.register(UserPayment)
 
-class HMCAdmin(AdminSite):
-    site_header = "HMC Admin Area"
-    
-hmc_admin = HMCAdmin(name = "HMCAdmin")
-hmc_admin.register(Student)
-
 admin.site.site_header = 'Hall Management System Administration'

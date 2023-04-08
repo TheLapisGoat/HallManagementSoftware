@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Calculate Student Fees</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+        }
+        h2 {
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            border: 2px solid #ddd;
+            width: 80%;
+            max-width: 1000px;
+            background-color: #fff;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            text-align: center;
+            text-decoration: none;
+            background-color: #4CAF50;
+            color: #fff;
+            border-radius: 5px;
+        }
+        a:hover {
+            background-color: #3e8e41;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calculate Student Fees</h1>
+    <h2>Hall: {{ hall.name }}</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Roll Number</th>
+                <th>Mess Fee</th>
+                <th>Room Rent</th>
+                <th>Amenity Fees</th>
+                <th>Total Fees</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+                <tr>
+                    <td>{{ student.rollNumber }}</td>
+                    <td>{{ student.messAccount.due }}</td>
+                    <td>{{ student.room.rent }}</td>
+                    <td>{{ amenityFees }}</td>
+                    <td>{{ student.messAccount.due|add:amenityFees|add:student.room.rent }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>Total Fees: {{ totalFees }}</p>
+    <div>
+    <a href="{% url 'confirm-student-fees' hall.pk %}" onclick="return confirm('Are you sure you want to finalize these fees? \n (Once added, they cannot be changed)')">Confirm Fees</a>
+    <a href="{% url 'index' %}">Home</a>
+    </div>
+    <script src="" async defer></script>
+</body>
+</html>

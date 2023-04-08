@@ -82,7 +82,7 @@ class MessManager(models.Model):
 class Room(models.Model):
     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "rooms", blank = False)
     roomNumber = models.CharField("Room Number", max_length = 100, blank = False)
-    rent = models.FloatField("Rent", default = 0, blank = False)
+    rent = models.DecimalField("Rent", default = 0, blank = False, max_digits = 8, decimal_places = 2)
     
     def __str__(self):
         return self.roomNumber    
@@ -116,7 +116,7 @@ class MessAccount(models.Model):
     student = models.OneToOneField(Student, on_delete = models.CASCADE, related_name = "messAccount", blank = False, primary_key = True, unique = True)
     due = models.DecimalField("Mess Due", blank = False, default = 0, max_digits = 8, decimal_places = 2)
     paid = models.DecimalField("Paid", blank = False, default = 0, max_digits = 8, decimal_places = 2)
-    last_update = models.DateField("Last Update Date", auto_now_add = True)
+    last_update = models.DateTimeField("Last Update Date", auto_now = True)
     
 class Passbook(models.Model):
     student = models.OneToOneField(Student, on_delete = models.CASCADE, related_name = "passbook", blank = False, primary_key = True, unique = True)

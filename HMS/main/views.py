@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden, HallClerk, HallEmployee, HallEmployeeLeave, UserPayment, Payment
+from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden, HallClerk, HallEmployee, HallEmployeeLeave, UserPayment, Payment, AmenityRoom
 from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm, HallEmployeeForm, HallEmployeeLeaveForm, HallEmployeeEditForm
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -81,6 +81,8 @@ def pay(request):
     if total_paid is not None and total_due is not None:
         total_due = total_due - total_paid
     
+    total_due = total_due
+    total_paid = total_paid
     if total_due is not None and total_due > 0:
         stripe.api_key = settings.STRIPE_SECRET_KEY
         if request.method == 'POST':
@@ -92,7 +94,7 @@ def pay(request):
                 {
                     'price_data': {
                         'currency': 'inr',
-                        'unit_amount': int(form.data['amount'])*100, # convert the price to cents
+                        'unit_amount': int(form.cleaned_data['amount']*100), # convert the price to cents
                         'product_data': {
                             'name': 'Fees',
                         },
@@ -109,9 +111,9 @@ def pay(request):
             else:
                 return render(request, 'payment_form.html', {'form': form, 'total_due': total_due})
         else:
-            form = PaymentForm(total_due=total_due)
+            form = PaymentForm(total_due=round(total_due, 2))
 
-        return render(request, 'payment_form.html', {'form': form, 'total_due': total_due})
+        return render(request, 'payment_form.html', {'form': form, 'total_due': round(total_due, 2)})
     else:
         messages.add_message(request, messages.INFO, "You have no dues left")
         return redirect("passbook")
@@ -405,9 +407,54 @@ def stripe_webhook(request):
 def wardenIndex(request):
     if request.user.role != "warden":
         return redirect("index")
-    hall = request.user.warden.hall
     
+    hall = request.user.warden.hall
     currentOccupancy = hall.getCurrentOccupancy()
     maxOccupancy = hall.getMaxOccupancy()
     
-    # return render(request, 'index-admission.html', {'students': students})
+    context = {'hall': hall, 'currentOccupancy': currentOccupancy, 'maxOccupancy': maxOccupancy}
+    return render(request, 'index-warden.html', context)
+
+@login_required(login_url = "main-login")
+def calculate_student_fees(request):
+    if request.user.role != "warden":
+        return redirect("index")
+    
+    hall = request.user.warden.hall
+    students = hall.students.all()
+    amenityFees = AmenityRoom.objects.filter(hall = hall).aggregate(total = Sum('rent'))['total']
+    
+    totalFees = 0
+    for student in students:
+        totalFees += student.room.rent + amenityFees + student.messAccount.due
+    
+    context = {
+        'hall': hall,
+        'students': students,
+        'amenityFees': amenityFees,
+        'totalFees': totalFees,
+    }
+    return render(request, 'calculate_student_fees.html', context)
+
+@login_required(login_url = "main-login")
+def confirm_student_fees(request, pk):
+    if request.user.role != "warden":
+        return redirect("index")
+    
+    hall = Hall.objects.get(pk=pk)
+    students = hall.students.all()
+    amenityFees = AmenityRoom.objects.filter(hall = hall).aggregate(total = Sum('rent'))['total']
+    
+    for student in students:
+        passbook = student.passbook
+        
+        messAccount = student.messAccount
+        Due.objects.create(passbook = passbook, demand = messAccount.due, type = 'mess')
+        messAccount.due = Decimal('0.00')
+        messAccount.save()
+        
+        Due.objects.create(passbook = passbook, demand = amenityFees, type = 'amenityRooms')
+        
+        Due.objects.create(passbook = passbook, demand = student.room.rent, type = 'boarderRoom')
+    
+    return redirect('index')
