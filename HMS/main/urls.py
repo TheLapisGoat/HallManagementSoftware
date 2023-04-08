@@ -5,6 +5,7 @@ from .admin import hmc_admin
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("admin/", admin.site.index, name = "admin-index"),
     path("home", views.index, name = "index"),
     path("", views.index, name = "index"),
     path("login/", views.loginUser, name="main-login"),

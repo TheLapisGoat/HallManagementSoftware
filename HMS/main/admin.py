@@ -115,3 +115,5 @@ class HMCAdmin(AdminSite):
     
 hmc_admin = HMCAdmin(name = "HMCAdmin")
 hmc_admin.register(Student)
+
+admin.site.site_header = 'Hall Management System Administration'

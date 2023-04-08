@@ -32,13 +32,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "phonenumber_field",
+    "main.apps.MainConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "main.apps.MainConfig",
 ]
 
 MIDDLEWARE = [
@@ -131,4 +132,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_URL = "main-login"
 
 AUTH_USER_MODEL = "main.Person" 
+
+LOGOUT_REDIRECT_URL = "main-login"
 

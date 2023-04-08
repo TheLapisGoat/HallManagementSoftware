@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db.models import Sum
+from phonenumber_field.modelfields import PhoneNumberField
 # Create your models here.
 
 class Person(AbstractUser, PermissionsMixin):
@@ -23,7 +24,7 @@ class Person(AbstractUser, PermissionsMixin):
         verbose_name_plural = "Persons"
         
     address = models.TextField("Address", blank=False)
-    telephoneNumber = models.IntegerField("TelephoneNumber", blank=False)
+    telephoneNumber = PhoneNumberField("Telephone Number", blank=False)
     #photograph = models.ImageField("Photo")
 
     REQUIRED_FIELDS = ["email", "address", "telephoneNumber", "role", "first_name", "last_name"]

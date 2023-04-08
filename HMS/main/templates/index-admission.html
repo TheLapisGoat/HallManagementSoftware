@@ -1,25 +1,111 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
-        <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-        <h1>Admission Unit</h1>
-        <a href = "{% url 'newadmission' %}" >New Admission</a>
-        <a href = "{% url 'newwarden' %}" >New Warden</a>
-        <a href = "{% url 'main-logout' %}">Logout</a>
-        <script src="" async defer></script>
-    </body>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Admission Unit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        background-color: #f2f2f2;
+        color: #333;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+      }
+      h1 {
+        color: #008000;
+        font-size: 28px;
+        margin-bottom: 24px;
+        text-align: center;
+      }
+      .center {
+        display: flex;
+        justify-content: center;
+      }
+      .button {
+        background-color: #008000;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 12px 24px;
+        text-align: center;
+        text-decoration: none;
+      }
+      .button:hover {
+        background-color: #006400;
+      }
+      .logout {
+        background-color: #cc0000;
+        margin-left: 16px;
+      }
+      .logout:hover {
+        background-color: #a30000;
+      }
+      table {
+        border-collapse: collapse;
+        margin: 0 auto;
+        width: 100%;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #008000;
+        color: #fff;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Admission Unit</h1>
+    <div class="center">
+      <a href="{% url 'newadmission' %}" class="button">New Admission</a>
+      <a href="{% url 'newwarden' %}" class="button">New Warden</a>
+      <a href="{% url 'main-logout' %}" class="button logout">Logout</a>
+    </div>
+    <br>
+    <div class="filter-form">
+      <form method="get">
+          <label for="filter_name">Roll Number:</label>
+          <input type="text" name="filter_rollNumber" id="filter_rollNumber" value="{{ request.GET.filter_rollNumber }}">
+          <label for="filter_hall">Hall:</label>
+          <input type="text" name="filter_hall" id="filter_hall" value="{{ request.GET.filter_hall }}">
+          <button type="submit">Filter</button>
+      </form>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Roll Number</th>
+          <th>Hall</th>
+          <th>Email</th>
+          <th>Phone Number</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+          <tr>
+            <td>{{ student.rollNumber }}</td>
+            <td>{{ student.hall }}</td>
+            <td>{{ student.person.email }}</td>
+            <td>{{ student.person.telephoneNumber }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5">No students found.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
 </html>

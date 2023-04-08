@@ -1,58 +1,166 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
+        <title>Update Mess Accounts</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+        <style>
+          body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+            text-align: center;
+            color: #333;
+          }
+          
+          h1 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #008000;
+            margin-top: 20px;
+          }
+          
+          a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #fff;
+            background-color: #008000;
+            border-radius: 5px;
+            transition: background-color 0.3s ease-in-out;
+          }
+          
+          a:hover {
+            background-color: #005000;
+          }
+          
+          table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            max-width: 1200px;
+            text-align: center;
+            background-color: #fff;
+            border: 2px solid #008000;
+            border-radius: 5px;
+          }
+          
+          th, td {
+            padding: 10px;
+            border: 1px solid #008000;
+          }
+          
+          th {
+            background-color: #008000;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+          }
+          
+          input[type=submit] {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            background-color: #008000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+          }
+          
+          input[type=submit]:hover {
+            background-color: #005000;
+          }
+          
+          form p {
+            text-align: center;
+            margin: 0;
+          }
+          
+          .errorlist {
+            color: #f00;
+            font-weight: bold;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+          }
+          
+          .browsehappy {
+            padding: 10px 0;
+            background-color: #008000;
+            color: #fff;
+            text-align: center;
+          }
+          
+          @media (max-width: 768px) {
+            a, input[type=submit] {
+              display: block;
+              margin: 10px auto;
+              padding: 10px 20px;
+              font-size: 16px;
+            }
+          
+            table {
+              width: 100%;
+              margin: 10px auto;
+            }
+          }          
+        </style>        
     </head>
     <body>
-        <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-        <h1>Update Mess Accounts</h1>
-        {% if messages %}
-          {% for message in messages %}
-            <p>{{ message }}</p>
-          {% endfor %}
-        {% endif %}
-        <form method="post">
-            {% csrf_token %}
-            {{ formset.management_form }}
-              <table id="formset" class="form">
-              {% for form in formset.forms %}
-                {% if forloop.first %}
-                <thead><tr>
-                  {% for field in form.visible_fields %}
-                  <th>{{ field.label|capfirst }}</th>
-                  {% endfor %}
-                </tr></thead>
-                {% endif %}
-                <tr class="{% cycle row1 row2 %}">
+      <!--[if lt IE 7]>
+          <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+      <![endif]-->
+      <h1>Update Mess Accounts</h1>
+      {% if messages %}
+        {% for message in messages %}
+          <p>{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+      <form method="post">
+          {% csrf_token %}
+          {{ formset.management_form }}
+            <table id="formset" class="form">
+            {% for form in formset.forms %}
+              {% if forloop.first %}
+              <thead><tr>
                 {% for field in form.visible_fields %}
-                  <td>
-                  {# Include the hidden fields in the form #}
-                  {% if forloop.first %}
-                    {% for hidden in form.hidden_fields %}
-                    {{ hidden }}
-                    {% endfor %}
-                  {% endif %}
-                    {{ field.errors.as_ul }}
-                    {{ field }}
-                  </td>
+                <th>{{ field.label|capfirst }}</th>
                 {% endfor %}
-                </tr>
+              </tr></thead>
+              {% endif %}
+              <tr class="{% cycle row1 row2 %}">
+              {% for field in form.visible_fields %}
+                <td>
+                {# Include the hidden fields in the form #}
+                {% if forloop.first %}
+                  {% for hidden in form.hidden_fields %}
+                  {{ hidden }}
+                  {% endfor %}
+                {% endif %}
+                  {{ field.errors.as_ul }}
+                  {{ field }}
+                </td>
               {% endfor %}
-              </table>
-              <input type="submit" value="Submit" />
-        </form>
-        <a href = "{% url 'messmanager-index' %}">Home</a>
-        <script src="" async defer></script>
-    </body>
+              </tr>
+            {% endfor %}
+            </table>
+            <input type="submit" class="button" value="Submit" />
+      </form>
+      <a href = "{% url 'messmanager-index' %}" class="button">Home</a>
+  </body>
 </html>
+
+
+

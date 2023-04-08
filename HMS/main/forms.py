@@ -2,10 +2,11 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from .models import Person, MessAccount, Student, Hall, BoarderRoom, Complaint, Warden, HallEmployeeLeave, HallEmployee
 from django.core.validators import MinValueValidator, MaxValueValidator
+from phonenumber_field.formfields import PhoneNumberField
 
 class PersonCreationForm(UserCreationForm):
     address = forms.CharField(max_length=255, required=True)
-    telephoneNumber = forms.IntegerField(required=True)
+    telephoneNumber = PhoneNumberField(required=True)
     role = forms.ChoiceField(choices=Person.ROLES, required=True)
 
     class Meta:
@@ -14,7 +15,7 @@ class PersonCreationForm(UserCreationForm):
         
 class PersonChangeForm(UserChangeForm):
     address = forms.CharField(max_length=255, required=True)
-    telephoneNumber = forms.IntegerField(required=True)
+    telephoneNumber = PhoneNumberField(required=True)
     role = forms.ChoiceField(choices=Person.ROLES, required=True)
 
     class Meta:
@@ -30,7 +31,7 @@ class StudentCreationForm(forms.ModelForm):
     last_name = forms.CharField(max_length = 150, required = True)
     email = forms.EmailField(required = True)
     address = forms.CharField(widget = forms.Textarea, required = True)
-    telephoneNumber = forms.IntegerField(required = True)
+    telephoneNumber = PhoneNumberField(required = True)
     
     class Meta:
         model = Student
@@ -59,7 +60,7 @@ class StudentChangeForm(forms.ModelForm):
     last_name = forms.CharField(max_length = 150)
     email = forms.EmailField()
     address = forms.CharField(widget = forms.Textarea)
-    telephoneNumber = forms.IntegerField()
+    telephoneNumber = PhoneNumberField()
     
     class Meta:
         model = Student
@@ -105,7 +106,7 @@ class StudentAdmissionForm(forms.Form):
     last_name = forms.CharField(max_length = 150, required = True)
     email = forms.EmailField(required = True)
     address = forms.CharField(widget = forms.Textarea, required = True)
-    telephoneNumber = forms.IntegerField(required = True)
+    telephoneNumber = PhoneNumberField(required = True)
     
     def clean(self):
         cleaned_data = super(forms.Form, self).clean()
@@ -116,6 +117,20 @@ class StudentAdmissionForm(forms.Form):
             self.add_error('confirm_password', "Password does not match")
 
         return cleaned_data
+    
+    def is_valid(self):
+        valid = super().is_valid()
+        if not valid:
+            return valid
+        rollNumber = self.cleaned_data.get('rollNumber')
+        username = self.cleaned_data.get('username')
+        if Student.objects.filter(rollNumber=rollNumber).exists():
+            self.add_error('rollNumber', 'This roll number already exists.')
+            return False
+        if Person.objects.filter(username = username).exists():
+            self.add_error('username', 'This username already exists.')
+            return False
+        return True
 
 class MessUpdateForm(forms.ModelForm):
     
@@ -162,7 +177,7 @@ class WardenAdmissionForm(forms.Form):
     last_name = forms.CharField(max_length = 150, required = True)
     email = forms.EmailField(required = True)
     address = forms.CharField(widget = forms.Textarea, required = True)
-    telephoneNumber = forms.IntegerField(required = True)
+    telephoneNumber = PhoneNumberField(required = True)
     hall = forms.ModelChoiceField(queryset = Hall.objects.all(), required = True)
     
     def clean(self):
@@ -179,7 +194,7 @@ class WardenChangeForm(forms.ModelForm):
     last_name = forms.CharField(max_length = 150)
     email = forms.EmailField()
     address = forms.CharField(widget = forms.Textarea)
-    telephoneNumber = forms.IntegerField()
+    telephoneNumber = PhoneNumberField()
     
     class Meta:
         model = Warden
@@ -221,7 +236,7 @@ class WardenCreationForm(forms.ModelForm):
     last_name = forms.CharField(max_length = 150, required = True)
     email = forms.EmailField(required = True)
     address = forms.CharField(widget = forms.Textarea, required = True)
-    telephoneNumber = forms.IntegerField(required = True)
+    telephoneNumber = PhoneNumberField(required = True)
     hall = forms.ModelChoiceField(queryset = Hall.objects.all(), required = True)
     
     class Meta:
