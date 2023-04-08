@@ -25,4 +25,7 @@ urlpatterns = [
     path('hallclerk/<int:pk>/add_leave/', views.add_hallemployee_leave, name='add-leave-hallemployee'),
     path('hallclerk/add_hallemployee/', views.add_hallemployee, name='add-hallemployee'),
     path('hallclerk/<int:pk>/delete/', views.delete_hallemployee, name='delete-hallemployee'),
+    path("passbook/pay/success", views.payment_successful, name = "success"),
+    path("passbook/pay/cancel", views.payment_cancelled, name = "cancel"),
+    path("passbook/pay/stripe_webhook/", views.stripe_webhook, name = "stripe_webhook"),
 ]

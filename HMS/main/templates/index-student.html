@@ -27,6 +27,7 @@
             {% csrf_token %}
             <button type="submit">Logout</button>
         </form>
+        <a href="{% url 'passbook' %}">Passbook</a>
         <a href="{% url 'complaints-student' %}">Complaints </a>
         <script src="" async defer></script>
     </body>

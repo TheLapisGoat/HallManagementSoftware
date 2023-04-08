@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Person, Student, Hall, BoarderRoom, MessAccount, MessManager, Passbook, Due, AmenityRoom, Complaint, ComplaintRegister, Warden, HallClerk, HallEmployee, HallEmployeeLeave
+from .models import Person, Student, Hall, BoarderRoom, MessAccount, MessManager, Passbook, Due, AmenityRoom, Complaint, ComplaintRegister, Warden, HallClerk, HallEmployee, HallEmployeeLeave, UserPayment
 # Register your models here.
 
 from django.contrib.auth.admin import UserAdmin
@@ -109,6 +109,7 @@ admin.site.register(Warden, WardenAdmin)
 admin.site.register(HallClerk)
 admin.site.register(HallEmployee)
 admin.site.register(HallEmployeeLeave)
+admin.site.register(UserPayment)
 
 class HMCAdmin(AdminSite):
     site_header = "HMC Admin Area"

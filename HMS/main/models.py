@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db.models import Sum
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 # Create your models here.
 
 class Person(AbstractUser, PermissionsMixin):
@@ -238,3 +240,13 @@ class ATR(models.Model):
 #     description = models.TextField()
 #     start_date = models.DateField()
 #     end_date = models.DateField()
+
+class UserPayment(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    payment_bool = models.BooleanField(default=False)
+    stripe_checkout_id = models.CharField(max_length=500)
+
+@receiver(post_save, sender=Student)
+def create_student_payment(sender, instance, created, **kwargs):
+    if created:
+        UserPayment.objects.create(student=instance)
