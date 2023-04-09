@@ -639,3 +639,30 @@ def generate_mess_report(request):
 
     doc.build(elements)
     return response
+
+@login_required(login_url = "main-login")
+def w_complaints(request):
+    if request.user.role == "warden":
+        complaints = request.user.warden.hall.complaint_register.r_complaints.all()
+        context = {'complaints': complaints}
+        return render(request, "w-complaints.html", context)
+       
+    # if request.method == 'POST':
+    #     # form = ComplaintResolveForm(request.POST)
+    #     context = {'form': form, 'complaints': complaints}
+    #     if form.is_valid():
+    #         complaintid = int(form.cleaned_data['id'])
+    #         complaint = Complaint.objects.filter(pk=complaintid)
+    #         if complaint != None and complaintid != 0: #and complaint.student.hall==request.user.warden.hall.name:
+    #             # request.session['param1'] = complaint
+    #             # url = reverse('resolvecomplaints', args=[obj.title foResolvelvecomplaints.html",{'complaint':complaint}) #{'complaint':complaint}
+    #             return redirect (reverse('resolvecomplaints', complaintid))
+    #         else:
+    #             return render(request, 'w-complaints.html', context)                         
+    #     else:
+    #         context = {'form': form, 'complaints': complaints}
+    #         return render(request, "w-complaints.html", context)
+    # else:
+    #     form = ComplaintResolveForm()
+    #     context = {'form': form,'complaints': complaints}
+    #     return render(request, 'w-complaints.html', context)

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaints</title>
+    
+</head>
+<body>
+    <h1>Manage the Complaints</h1>
+    <table>
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Student</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Complainee</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for complaint in complaints %}
+            <tr>
+              <td>{{ complaint.id }}</td>
+                <td>{{ complaint.student.rollNumber }}</td>
+              <td>{{ complaint.title }}</td>
+              <td>{{ complaint.description }}</td> 
+                <td>{{ complaint.date }}</td>
+                <td>{{ complaint.nameagainst }}</td>
+                <td>{{ complaint.status }}</td> 
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>   
+    
+</body>
+</html>
