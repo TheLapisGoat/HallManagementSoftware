@@ -215,8 +215,9 @@ def hallClerkIndex(request):
     if request.user.role != "hall_clerk":
         return redirect("index")
     
+    hall = request.user.hall_clerk.hall
     employees = HallEmployee.objects.filter(hall = request.user.hall_clerk.hall)
-    return render(request, 'index-hallclerk.html', {'employees': employees})
+    return render(request, 'index-hallclerk.html', {'employees': employees, 'hall': hall})
     
 @login_required(login_url = "main-login")
 def edit_hallemployee(request, pk):

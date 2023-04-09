@@ -59,12 +59,18 @@ class HallClerk(models.Model):
         else:
             self.person.role = 'hall_clerk'
             super(HallClerk, self).save(*args, **kwargs)
+            
+    def __str__(self):
+        return self.person.first_name
 
 class HallEmployee(models.Model):
     name = models.CharField("Name", max_length = 100, blank = False)
     hall = models.ForeignKey(Hall, on_delete = models.PROTECT, related_name = "hall_employees", blank = False)
     job = models.CharField("Job", max_length = 100, blank = False)
     salary = models.DecimalField("Salary", default = 0, blank = False, max_digits = 8, decimal_places = 2)
+    
+    def __str__(self):
+        return self.name
     
 class HallEmployeeLeave(models.Model):
     hallemployee = models.ForeignKey(HallEmployee, on_delete = models.CASCADE, related_name = "leaves", blank = False)
@@ -81,6 +87,9 @@ class MessManager(models.Model):
         else:
             self.person.role = 'mess_manager'
             super(MessManager, self).save(*args, **kwargs)
+            
+    def __str__(self):
+        return self.person.first_name + self.person.last_name
 
 class Room(models.Model):
     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "rooms", blank = False)
@@ -97,7 +106,7 @@ class AmenityRoom(Room):
     name = models.CharField("Name", max_length = 100, blank = False)
         
     def __str__(self):
-        return self.name
+        return self.roomNumber + " - " + self.name
 
 class BoarderRoom(Room):
     hall = models.ForeignKey(Hall, on_delete = models.CASCADE, related_name = "boarderRooms", blank = False)
@@ -105,15 +114,24 @@ class BoarderRoom(Room):
     maxOccupancy = models.IntegerField("Max Occupancy", blank = False)
     currentOccupancy = models.IntegerField("Current Occupancy", blank = False, default = 0)
     
+    def __str__(self):
+        return self.roomNumber + " - " + self.hall.name + "|" + str(self.currentOccupancy) + "/" + str(self.maxOccupancy)
+    
 class Student(models.Model):
     person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "student", primary_key = True, blank = False, unique = True)
     hall = models.ForeignKey(Hall, on_delete = models.PROTECT, related_name = "students", blank = False)
     rollNumber = models.CharField("Roll Number", max_length = 100, blank = False, unique = True)
     room = models.ForeignKey(BoarderRoom, on_delete = models.PROTECT, related_name = "students", blank = False)
+    
+    def __str__(self):
+        return self.person.first_name + " " + self.person.last_name + " - " + self.rollNumber
 
 class Warden(models.Model):
     person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "warden", primary_key = True)
     hall = models.OneToOneField(Hall, on_delete = models.PROTECT, related_name = "warden", blank = False, unique = True)
+    
+    def __str__(self):
+        return self.person.first_name + " " + self.person.last_name + " - " + self.hall.name
 
 class MessAccount(models.Model):
     student = models.OneToOneField(Student, on_delete = models.CASCADE, related_name = "messAccount", blank = False, primary_key = True, unique = True)
@@ -121,9 +139,15 @@ class MessAccount(models.Model):
     paid = models.DecimalField("Paid", blank = False, default = 0, max_digits = 8, decimal_places = 2)
     last_update = models.DateTimeField("Last Update Date", auto_now = True)
     
+    def __str__(self):
+        return "Mess Account: " + self.student.person.first_name + " " + self.student.person.last_name + " - " + self.student.rollNumber
+    
 class Passbook(models.Model):
     student = models.OneToOneField(Student, on_delete = models.CASCADE, related_name = "passbook", blank = False, primary_key = True, unique = True)
 
+    def __str__(self):
+        return "Passbook: " + self.student.person.first_name + " " + self.student.person.last_name + " - " + self.student.rollNumber
+    
 class Due(models.Model):
     
     TYPE = [
@@ -136,6 +160,9 @@ class Due(models.Model):
     demand = models.DecimalField("Demand", blank = False, default = 0, max_digits = 8, decimal_places = 2)
     type = models.CharField("Type", max_length = 100, choices = TYPE, blank = False, default = 'mess')
     passbook = models.ForeignKey(Passbook, on_delete = models.CASCADE, related_name = "dues", blank = False)
+    
+    def __str__(self):
+        return  self.type + ":" + self.passbook.student.person.first_name + " " + self.passbook.student.person.last_name + " - " + self.passbook.student.rollNumber
     
 class Payment(models.Model):
     
