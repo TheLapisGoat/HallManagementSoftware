@@ -11,7 +11,7 @@ class PersonCreationForm(UserCreationForm):
 
     class Meta:
         model = Person
-        fields = ('username', 'email', 'password1', 'password2', 'address', 'telephoneNumber', 'role', 'photograph')
+        fields = ('username', 'email', 'password1', 'password2', 'address', 'telephoneNumber', 'role', 'photograph', 'first_name', 'last_name')
         
 class PersonChangeForm(UserChangeForm):
     address = forms.CharField(max_length=255, required=True)
@@ -20,7 +20,7 @@ class PersonChangeForm(UserChangeForm):
 
     class Meta:
         model = Person
-        fields = ('username', 'email', 'address', 'telephoneNumber', 'role', 'photograph')
+        fields = ('username', 'email', 'address', 'telephoneNumber', 'role', 'photograph', 'first_name', 'last_name')
         
 class StudentCreationForm(forms.ModelForm):
     

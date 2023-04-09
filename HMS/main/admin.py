@@ -22,7 +22,7 @@ class PersonAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2', 'address', 'telephoneNumber', 'photograph', 'role', 'is_staff', 'is_superuser', 'groups')}
+            'fields': ('username', 'email', 'password1', 'password2', 'address', 'telephoneNumber','first_name','last_name', 'photograph', 'role', 'is_staff', 'is_superuser', 'groups')}
         ),
     )
     search_fields = ('username', 'email', 'first_name', 'last_name')
@@ -66,7 +66,7 @@ class BoarderRoomAdmin(ModelAdmin):
         return obj.hall.name
     name.short_description = "Hall Name"
     
-    list_display = ('name', 'roomNumber', 'rent', 'currentOccupancy', 'maxOccupancy', 'newstatus')
+    list_display = ('roomNumber', 'name', 'rent', 'currentOccupancy', 'maxOccupancy', 'newstatus')
 
 class AmenityRoomAdmin(ModelAdmin):
     model = AmenityRoom

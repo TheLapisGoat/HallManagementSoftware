@@ -658,7 +658,7 @@ def w_resolvecomplaints(request, pk):
         form = ATREntryForm(complaint, request.POST)
         if form.is_valid():            
             atr = form.save()
-            complaint.status = 'resolved'
+            complaint.status = 'Resolved'
             complaint.save()
             return redirect('w_complaints-index')
         else:           
