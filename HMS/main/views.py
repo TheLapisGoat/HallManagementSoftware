@@ -642,10 +642,20 @@ def generate_mess_report(request):
 
 @login_required(login_url = "main-login")
 def w_complaints(request):
-    if request.user.role == "warden":
-        complaints = request.user.warden.hall.complaint_register.r_complaints.all()
-        context = {'complaints': complaints}
-        return render(request, "w-complaints.html", context)
+    if request.user.role != "warden":
+        return redirect("index")
+    complaints = request.user.warden.hall.complaint_register.r_complaints.all()
+    context = {'complaints': complaints}
+    return render(request, "w-complaints.html", context)
+
+@login_required(login_url = "main-login")
+def w_resolvecomplaints(request, pk):
+    if request.user.role != "warden":
+        return redirect("index")
+    complaint = get_object_or_404(Complaint, pk = pk)
+    return render (request, "w-resolvecomplaints.html", {'complaint':complaint})
+    
+    
        
     # if request.method == 'POST':
     #     # form = ComplaintResolveForm(request.POST)

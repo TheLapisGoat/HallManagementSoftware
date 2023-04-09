@@ -219,6 +219,11 @@ class UserPayment(models.Model):
     payment_bool = models.BooleanField(default=False)
     stripe_checkout_id = models.CharField(max_length=500)
 
+class ATR(models.Model):
+    name = models.CharField(max_length = 100)
+    details = models.TextField()
+    complaint = models.OneToOneField(Complaint, on_delete = models.CASCADE, related_name = "ATR", blank = False, primary_key = True)
+
 @receiver(post_save, sender=Student)
 def create_student_payment(sender, instance, created, **kwargs):
     if created:

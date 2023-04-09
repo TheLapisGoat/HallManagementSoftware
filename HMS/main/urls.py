@@ -37,4 +37,5 @@ urlpatterns = [
     path('warden/hallpassbook/', views.hallpassbook, name = "hallpassbook"),
     path('hallclerk/add_pettyexpense/', views.add_pettyexpense, name = "add-pettyexpense"),
     path("warden/complaints", views.w_complaints, name = "w_complaints-index"),
+    path("warden/complaints/resolvecomplaints/<int:pk>", views.w_resolvecomplaints, name = "resolvecomplaints"),
 ]

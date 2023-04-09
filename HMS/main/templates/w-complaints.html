@@ -30,7 +30,8 @@
               <td>{{ complaint.description }}</td> 
                 <td>{{ complaint.date }}</td>
                 <td>{{ complaint.nameagainst }}</td>
-                <td>{{ complaint.status }}</td> 
+                <td>{{ complaint.status }}</td>
+                <td><a href="{% url 'resolvecomplaints' complaint.pk %}">Resolve</a></td> 
             </tr>
           {% endfor %}
         </tbody>
