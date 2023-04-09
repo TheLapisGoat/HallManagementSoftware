@@ -74,6 +74,7 @@ class AmenityRoomAdmin(ModelAdmin):
     def name(self, obj):
         return obj.hall.name
     name.short_description = "Hall Name"
+    
     list_display = ('name', 'roomNumber', 'rent',)  
 
 class WardenAdmin(ModelAdmin):

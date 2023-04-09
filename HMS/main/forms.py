@@ -169,8 +169,8 @@ class ComplaintForm(forms.Form):
     title = forms.CharField(max_length = 100, required = True)
     description = forms.CharField(widget = forms.Textarea, required = True)
     complainee = forms.CharField(max_length = 100, required = True, help_text = "Name of the person against whom the complaint is being filed")
-    date = forms.DateField(required = True, help_text="Date of the incident")
-    
+    date = forms.DateField(required = True, help_text="Date of the incident", widget=forms.DateInput(attrs={'type': 'date'}))
+        
     def clean(self):
         cleaned_data = super(forms.Form, self).clean()
         return cleaned_data
