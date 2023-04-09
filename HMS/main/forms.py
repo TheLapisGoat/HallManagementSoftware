@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
-from .models import Person, MessAccount, Student, Hall, BoarderRoom, Complaint, Warden, HallEmployeeLeave, HallEmployee, PettyExpense
+from .models import Person, MessAccount, Student, Hall, BoarderRoom, Complaint, Warden, HallEmployeeLeave, HallEmployee, PettyExpense, ATR
 from django.core.validators import MinValueValidator, MaxValueValidator
 from phonenumber_field.formfields import PhoneNumberField
 
@@ -315,3 +315,17 @@ class PettyExpenseForm(forms.ModelForm):
     class Meta:
         model = PettyExpense
         fields = ['demand', 'description']
+        
+class ATREntryForm(forms.ModelForm):
+    
+    class Meta:
+        model = ATR
+        fields = ['title', 'details', 'date']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+        }
+        
+    def __init__(self, hall, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["hall"].initial = hall
+        self.fields["hall"].disabled = True

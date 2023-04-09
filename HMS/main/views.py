@@ -7,7 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.db.models import Sum
 from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden, HallEmployee, UserPayment, Payment, AmenityRoom, MessManager, HallPassbook, PettyExpense, SalaryExpense
-from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm, HallEmployeeForm, HallEmployeeLeaveForm, HallEmployeeEditForm, PettyExpenseForm
+from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm, HallEmployeeForm, HallEmployeeLeaveForm, HallEmployeeEditForm, PettyExpenseForm, ATREntryForm
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 import stripe
