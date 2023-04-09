@@ -30,7 +30,11 @@
               <td>{{ complaint.description }}</td> 
                 <td>{{ complaint.date }}</td>
                 <td>{{ complaint.nameagainst }}</td>
-                <td>{{ complaint.status }}</td> 
+                {% if complaint.status == 'Pending' %}
+                <td>{{ complaint.status }}</td>
+                {% else %}
+                <td><a href="{% url 'getATRreport' complaint.pk %}">ATR</a></td>
+                {% endif %} 
             </tr>
           {% endfor %}
         </tbody>

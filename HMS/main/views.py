@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden, HallEmployee, UserPayment, Payment, AmenityRoom, MessManager, HallPassbook, PettyExpense, SalaryExpense
+from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden, HallEmployee, UserPayment, Payment, AmenityRoom, MessManager, HallPassbook, PettyExpense, SalaryExpense, ATR
 from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm, HallEmployeeForm, HallEmployeeLeaveForm, HallEmployeeEditForm, PettyExpenseForm, ATREntryForm
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -19,6 +19,7 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 import calendar
+from reportlab.pdfgen import canvas
 
 def getFreeRoom():
     halls = Hall.objects.all()
@@ -642,6 +643,44 @@ def generate_mess_report(request):
     return response
 
 @login_required(login_url = "main-login")
+def get_ATR_report(request, pk):
+    if request.user.role != "warden" and request.user.role != "student":
+        return redirect("index")
+    
+    complaint = Complaint.objects.get(pk = pk)
+    atr = complaint.ATR
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="ATR Report - {}.pdf"'.format(atr.title)
+
+    pdf = canvas.Canvas(response, pagesize=letter)
+
+    pdf.setFont('Helvetica', 12)
+
+    # Write the title and details of the ATR
+    pdf.drawString(100, 750, 'Title: {}'.format(atr.title))
+    pdf.drawString(100, 730, 'Details: {}'.format(atr.details))
+
+    # Draw a line
+    pdf.line(50, 700, 550, 700)
+
+    # Write the complaint details
+    pdf.drawString(100, 680, 'Complaint: {}'.format(atr.complaint.title))
+    pdf.drawString(100, 660, 'Date: {}'.format(atr.date))
+
+    # Draw a line
+    pdf.line(50, 630, 550, 630)
+
+    # Write the signature line
+    pdf.drawString(100, 600, 'Signature: ___________________')
+
+    # Close the PDF object cleanly, and we're done.
+    pdf.showPage()
+    pdf.save()
+
+    return response
+
+@login_required(login_url = "main-login")
 def w_complaints(request):
     if request.user.role != "warden":
         return redirect("index")
@@ -657,8 +696,8 @@ def w_resolvecomplaints(request, pk):
     if request.method == "POST":
         form = ATREntryForm(complaint, request.POST)
         if form.is_valid():            
-            atr = form.save()
-            complaint.status = 'resolved'
+            form.save()
+            complaint.status = 'Resolved'
             complaint.save()
             return redirect('w_complaints-index')
         else:           

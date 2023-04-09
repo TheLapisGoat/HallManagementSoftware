@@ -38,4 +38,5 @@ urlpatterns = [
     path('hallclerk/add_pettyexpense/', views.add_pettyexpense, name = "add-pettyexpense"),
     path("warden/complaints", views.w_complaints, name = "w_complaints-index"),
     path("warden/complaints/resolvecomplaints/<int:pk>", views.w_resolvecomplaints, name = "resolvecomplaints"),
+    path("home/getATRreport/<int:pk>", views.get_ATR_report, name = "getATRreport"),
 ]

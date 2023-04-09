@@ -31,7 +31,12 @@
                 <td>{{ complaint.date }}</td>
                 <td>{{ complaint.nameagainst }}</td>
                 <td>{{ complaint.status }}</td>
-                <td><a href="{% url 'resolvecomplaints' complaint.pk %}">Resolve</a></td> 
+                {% if complaint.status == 'Pending' %}
+                <td><a href="{% url 'resolvecomplaints' complaint.pk %}">Resolve</a></td>
+                {% endif %}
+                {% if complaint.status == 'Resolved' %}
+                <td><a href="{% url 'getATRreport' complaint.pk %}">ATR</a></td>
+                {% endif %}
             </tr>
           {% endfor %}
         </tbody>
