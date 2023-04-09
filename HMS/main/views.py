@@ -7,7 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.db.models import Sum
 from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden, HallEmployee, UserPayment, Payment, AmenityRoom, MessManager, HallPassbook, PettyExpense, SalaryExpense
-from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm, HallEmployeeForm, HallEmployeeLeaveForm, HallEmployeeEditForm, PettyExpenseForm
+from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm, HallEmployeeForm, HallEmployeeLeaveForm, HallEmployeeEditForm, PettyExpenseForm, ATREntryForm
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 import stripe
@@ -642,10 +642,20 @@ def generate_mess_report(request):
 
 @login_required(login_url = "main-login")
 def w_complaints(request):
-    if request.user.role == "warden":
-        complaints = request.user.warden.hall.complaint_register.r_complaints.all()
-        context = {'complaints': complaints}
-        return render(request, "w-complaints.html", context)
+    if request.user.role != "warden":
+        return redirect("index")
+    complaints = request.user.warden.hall.complaint_register.r_complaints.all()
+    context = {'complaints': complaints}
+    return render(request, "w-complaints.html", context)
+
+@login_required(login_url = "main-login")
+def w_resolvecomplaints(request, pk):
+    if request.user.role != "warden":
+        return redirect("index")
+    complaint = get_object_or_404(Complaint, pk = pk)
+    return render (request, "w-resolvecomplaints.html", {'complaint':complaint})
+    
+    
        
     # if request.method == 'POST':
     #     # form = ComplaintResolveForm(request.POST)
