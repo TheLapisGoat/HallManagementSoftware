@@ -141,4 +141,3 @@ REDIRECT_URL = "http://localhost:8000"
 
 PRODUCT_PRICE = "price_1MuUFLSBcrzVnIxoSE2lm5Ot"
 LOGOUT_REDIRECT_URL = "main-login"
-

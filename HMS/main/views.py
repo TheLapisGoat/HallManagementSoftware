@@ -42,7 +42,7 @@ def index(request):
         roomNumber = request.user.student.room.roomNumber
         rent = request.user.student.room.rent
         sum_amenity = request.user.student.hall.amenityRooms.aggregate(Sum('rent'))['rent__sum']
-        context = {'name': name, 'room': roomNumber, 'hall': hall, 'rent': rent, 'sum_amenity': sum_amenity,}
+        context = {'name': name, 'room': roomNumber, 'hall': hall, 'rent': rent, 'sum_amenity': sum_amenity}
         return render(request, "index-student.html",context)
     elif role == "mess_manager":
         return redirect("messmanager-index")
