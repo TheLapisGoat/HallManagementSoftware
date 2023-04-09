@@ -120,8 +120,6 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "main/static"),]
-
 STATIC_ROOT = os.path.join(BASE_DIR, "assets")
 
 # Default primary key field type
@@ -133,11 +131,9 @@ LOGIN_URL = "main-login"
 
 AUTH_USER_MODEL = "main.Person" 
 
-STRIPE_PUBLIC_KEY = "pk_test_51MuDGqSBcrzVnIxooMNDWWtu911P4Og3VkEYMjrHVlQPUPKX30pJHVOzyadKBJdoeb0IGHBjOTtYdMk75X7UfUbR00uDaxIixY"
-STRIPE_SECRET_KEY = "sk_test_51MuDGqSBcrzVnIxodCXyzHYZT71FA8qaCrxxKF9UJoQRFlHuO9pYOaJGMQbAqR5E8opBeQlaKCdJQH1Srlv9xXhx00Dzk9QdtU"
-STRIPE_WEBHOOK_SECRET = ""
+STRIPE_PUBLIC_KEY = "pk_test_51Mv2LQSFr7Olea7ZuKKdbjC7nKvlAFzDkoFmR5t1UzUQQfdHV7z0l3cGYq4yKtTwKNLVp2EzTjTWt4N8LolzxlIf00Pgo5i7FX"
+STRIPE_SECRET_KEY = "sk_test_51Mv2LQSFr7Olea7Zj1OuB3IwrjlEBdMgPTnRR7slhXMiN1uJgQWtir3buLD35Tw99NfiagmVO2kKnWhmyf0w5o1C00iXnsz7pU"
 
 REDIRECT_URL = "http://localhost:8000"
 
-PRODUCT_PRICE = "price_1MuUFLSBcrzVnIxoSE2lm5Ot"
 LOGOUT_REDIRECT_URL = "main-login"

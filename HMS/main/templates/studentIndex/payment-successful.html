@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+        /* Set background color and font styles */
+      body {
+        background-color: #f2f2f2;
+        font-family: Arial, sans-serif;
+      }
+      
+      /* Center the container element */
+      .container {
+        margin: 0 auto;
+        text-align: center;
+        padding: 20px;
+        max-width: 600px;
+      }
+      
+      /* Style the heading */
+      h1 {
+        font-size: 36px;
+        margin-bottom: 20px;
+        color: #4CAF50;
+      }
+      
+      /* Style the paragraph */
+      p {
+        font-size: 18px;
+        margin-top: 20px;
+      }
+      
+      /* Style the link */
+      a {
+        display: inline-block;
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 16px;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+      
+      a:hover {
+        background-color: #3e8e41;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container home_msg">
+      <h1>Fee payment successful, {{ customer.name }}!</h1>
+      <p><a href="{% url 'index' %}">Return to home</a></p>
+    </div>
+  </body>
+</html> 

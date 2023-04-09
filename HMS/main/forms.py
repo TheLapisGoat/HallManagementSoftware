@@ -1,6 +1,6 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
-from .models import Person, MessAccount, Student, Hall, BoarderRoom, Complaint, Warden, HallEmployeeLeave, HallEmployee, PettyExpense, ATR
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import Person, MessAccount, Student, Hall, Warden, HallEmployeeLeave, HallEmployee, PettyExpense, ATR
 from django.core.validators import MinValueValidator, MaxValueValidator
 from phonenumber_field.formfields import PhoneNumberField
 
@@ -156,7 +156,7 @@ class MessUpdateForm(forms.ModelForm):
             self.fields['rollNumber'].initial = student.rollNumber
 
 class PaymentForm(forms.Form):
-    amount = forms.DecimalField(label='Amount', max_digits=8, decimal_places=2, validators = [MinValueValidator(10)])
+    amount = forms.DecimalField(label='Amount', max_digits=8, decimal_places=2, validators = [MinValueValidator(1)])
     
     def __init__(self, total_due, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -294,6 +294,7 @@ class HallEmployeeForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["hall"].initial = hall
         self.fields["hall"].disabled = True
+        self.fields["salary"].validators.append(MinValueValidator(0))
         
 class HallEmployeeEditForm(forms.ModelForm):
     
@@ -309,12 +310,17 @@ class HallEmployeeEditForm(forms.ModelForm):
             self.fields["name"].initial = self.instance.name
             self.fields["job"].initial = self.instance.job
             self.fields["salary"].initial = self.instance.salary
+            self.fields["salary"].validators.append(MinValueValidator(0))
             
 class PettyExpenseForm(forms.ModelForm):
     
     class Meta:
         model = PettyExpense
         fields = ['demand', 'description']
+        
+    def __init__(self, hall, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["demand"].validators.append(MinValueValidator(0.01))
         
 class ATREntryForm(forms.ModelForm):
     

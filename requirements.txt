@@ -1,0 +1,4 @@
+Django==4.1.7
+django_phonenumber_field==7.0.2
+reportlab==3.6.12
+stripe==5.4.0

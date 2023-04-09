@@ -1,10 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db.models import Sum
-from django.dispatch import receiver
-from django.db.models.signals import post_save
 from phonenumber_field.modelfields import PhoneNumberField
-# Create your models here.
 
 class Person(AbstractUser, PermissionsMixin):
     
@@ -187,9 +184,6 @@ class Complaint(models.Model):
     date = models.DateField()
     nameagainst = models.CharField(max_length = 100)
     status = models.CharField(max_length = 100, default = "Pending")
-       
-    #image = models.ImageField()
-          
 
 class HallPassbook(models.Model):
     hall = models.OneToOneField(Hall, on_delete = models.CASCADE, related_name = "passbook", blank = False, primary_key = True, unique = True)

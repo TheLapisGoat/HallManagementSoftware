@@ -6,8 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden, HallEmployee, UserPayment, Payment, AmenityRoom, MessManager, HallPassbook, PettyExpense, SalaryExpense, ATR
-from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenCreationForm, WardenAdmissionForm, HallEmployeeForm, HallEmployeeLeaveForm, HallEmployeeEditForm, PettyExpenseForm, ATREntryForm
+from .models import Student, Person, Hall, MessAccount, Due, Complaint, Warden, HallEmployee, UserPayment, Payment, AmenityRoom, MessManager, PettyExpense, SalaryExpense
+from .forms import StudentAdmissionForm, MessAccountFormSet, PaymentForm, ComplaintForm, WardenAdmissionForm, HallEmployeeForm, HallEmployeeLeaveForm, HallEmployeeEditForm, PettyExpenseForm, ATREntryForm
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 import stripe
@@ -16,7 +16,7 @@ from decimal import Decimal
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 import calendar
 from reportlab.pdfgen import canvas
@@ -43,7 +43,7 @@ def index(request):
         rent = request.user.student.room.rent
         sum_amenity = request.user.student.hall.amenityRooms.aggregate(Sum('rent'))['rent__sum']
         context = {'name': name, 'room': roomNumber, 'hall': hall, 'rent': rent, 'sum_amenity': sum_amenity}
-        return render(request, "index-student.html",context)
+        return render(request, "studentIndex/index-student.html",context)
     elif role == "mess_manager":
         return redirect("messmanager-index")
     elif role == "hall_clerk":
@@ -76,7 +76,7 @@ def passbook(request):
         'total_paid': total_paid,
     }
 
-    return render(request, 'passbook.html', context)
+    return render(request, 'studentIndex/passbook.html', context)
 
 @login_required(login_url = "main-login")
 def pay(request):
@@ -118,11 +118,11 @@ def pay(request):
                 )
                 return redirect(checkout_session.url, code=303)
             else:
-                return render(request, 'payment_form.html', {'form': form, 'total_due': total_due})
+                return render(request, 'studentIndex/payment-form.html', {'form': form, 'total_due': total_due})
         else:
             form = PaymentForm(total_due=round(total_due, 2))
 
-        return render(request, 'payment_form.html', {'form': form, 'total_due': round(total_due, 2)})
+        return render(request, 'studentIndex/payment-form.html', {'form': form, 'total_due': round(total_due, 2)})
     else:
         messages.add_message(request, messages.INFO, "You have no dues left")
         return redirect("passbook")
@@ -141,7 +141,7 @@ def admissionIndex(request):
     if hall_filter:
         students = students.filter(hall__name__icontains = hall_filter)
     
-    return render(request, 'index-admission.html', {'students': students})
+    return render(request, 'admissionIndex/index-admission.html', {'students': students})
 
 @login_required(login_url = "main-login")
 def newAdmission(request):
@@ -156,7 +156,7 @@ def newAdmission(request):
             
             if room is None:
                 form.add_error(field = None, error = "Error! There is no space left in the institute")
-                return render(request, 'student_admission.html', {'form': form})
+                return render(request, 'admissionIndex/student-admission.html', {'form': form})
             
             person = Person.objects.create_user(
                 username = form.cleaned_data['username'],
@@ -178,16 +178,16 @@ def newAdmission(request):
             
             return redirect("admission-index")
         else:
-            return render(request, 'student_admission.html', {'form': form})
+            return render(request, 'admissionIndex/student-admission.html', {'form': form})
     else:
         form = StudentAdmissionForm()
-        return render(request, 'student_admission.html', {'form': form})
+        return render(request, 'admissionIndex/student-admission.html', {'form': form})
 
 @login_required(login_url = "main-login")
 def messManagerIndex(request):
     if request.user.role != "mess_manager":
         return redirect("index")
-    return render(request, 'index-messmanager.html')
+    return render(request, 'messmanagerIndex/index-messmanager.html')
 
 @login_required(login_url = "main-login")
 def manageMessAccounts(request):
@@ -204,12 +204,12 @@ def manageMessAccounts(request):
             messages.success(request, 'Mess accounts updated successfully')
             return redirect("manage-mess-accounts")
         else:
-            return render(request, 'update-mess-accounts.html', {'formset': formset})
+            return render(request, 'messmanagerIndex/update-mess-accounts.html', {'formset': formset})
     else:
         mess_accounts = MessAccount.objects.filter(student__in=students).distinct()
         formset = MessAccountFormSet(queryset=mess_accounts)
         
-    return render(request, 'update-mess-accounts.html', {"formset": formset})
+    return render(request, 'messmanagerIndex/update-mess-accounts.html', {"formset": formset})
         
 @login_required(login_url = "main-login")
 def hallClerkIndex(request):
@@ -218,7 +218,7 @@ def hallClerkIndex(request):
     
     hall = request.user.hall_clerk.hall
     employees = HallEmployee.objects.filter(hall = request.user.hall_clerk.hall)
-    return render(request, 'index-hallclerk.html', {'employees': employees, 'hall': hall})
+    return render(request, 'clerkIndex/index-hallclerk.html', {'employees': employees, 'hall': hall})
     
 @login_required(login_url = "main-login")
 def edit_hallemployee(request, pk):
@@ -232,10 +232,10 @@ def edit_hallemployee(request, pk):
             form.save()
             return redirect('hallclerk-index')
         else:
-            return render(request, 'edit_hallemployee.html', {'form': form, 'employee': employee})
+            return render(request, 'clerkIndex/edit-hallemployee.html', {'form': form, 'employee': employee})
         
     form = HallEmployeeEditForm(instance = employee)
-    return render(request, 'edit_hallemployee.html', {'form': form, 'employee': employee})
+    return render(request, 'clerkIndex/edit-hallemployee.html', {'form': form, 'employee': employee})
 
 @login_required(login_url = "main-login")
 def leaves_hallemployee(request, pk):
@@ -243,7 +243,7 @@ def leaves_hallemployee(request, pk):
         return redirect("index")
     employee = get_object_or_404(HallEmployee, pk=pk)
     leaves = employee.leaves.all()
-    return render(request, 'leaves_hallemployee.html', {'employee': employee, 'leaves': leaves})
+    return render(request, 'clerkIndex/leaves-hallemployee.html', {'employee': employee, 'leaves': leaves})
 
 @login_required(login_url = "main-login")
 def add_hallemployee_leave(request, pk):
@@ -256,7 +256,7 @@ def add_hallemployee_leave(request, pk):
             form.save()
             return redirect('leaves-hallemployees', pk=pk)
     context = {'form': form, 'hallemployee': hallemployee}
-    return render(request, 'add_leave_hallemployee.html', context)
+    return render(request, 'clerkIndex/add-leave-hallemployee.html', context)
 
 @login_required(login_url="main-login")
 def add_hallemployee(request):
@@ -270,7 +270,7 @@ def add_hallemployee(request):
             return redirect('hallclerk-index')
     else:
         form = HallEmployeeForm(request.user.hall_clerk.hall)
-    return render(request, 'add_hallemployee.html', {'form': form})
+    return render(request, 'clerkIndex/add-hallemployee.html', {'form': form})
 
 @login_required(login_url = "main-login")
 def delete_hallemployee(request, pk):
@@ -293,16 +293,7 @@ def add_pettyexpense(request):
             return redirect('hallclerk-index')
         
     context = {'form': form}
-    return render(request, 'add_pettyexpense.html', context)
-
-@login_required(login_url = "main-login")
-def dues(request):
-    if request.user.role != "student":
-        return redirect("index")
-    student = request.user.student
-    room_dues=student.room.rent
-    amenity_rooms = request.user.student.hall.amenityRooms.annotate(total_rent=Sum('rent')).values('name', 'total_rent')
-    return render(request, 'dues-student.html', {'student': student, 'room_dues': room_dues, 'amenity_rooms': amenity_rooms})
+    return render(request, 'clerkIndex/add-pettyexpense.html', context)
 
 def loginUser(request):
     if request.user.is_authenticated:
@@ -330,7 +321,7 @@ def logoutUser(request):
 @login_required(login_url = "main-login")
 def complaints(request):
     complaints = request.user.student.s_complaints.all()
-    return render(request, "complaints.html", {'complaints': complaints})
+    return render(request, "studentIndex/complaints-student.html", {'complaints': complaints})
 
 @login_required(login_url = "main-login")    
 def newComplaints(request):
@@ -348,10 +339,10 @@ def newComplaints(request):
             request.user.student.s_complaints.add(complaint)
             return redirect("complaints-student")
         else:
-            return render(request, "new-complaints.html", {'form': form})
+            return render(request, "studentIndex/new-complaints.html", {'form': form})
     else:
         form = ComplaintForm()
-        return render(request, 'new-complaints.html', {'form': form})
+        return render(request, 'studentIndex/new-complaints.html', {'form': form})
     
 @login_required(login_url = "main-login")
 def newWarden(request):
@@ -381,10 +372,10 @@ def newWarden(request):
             
             return redirect("admission-index")
         else:
-            return render(request, 'new_warden.html', {'form': form})
+            return render(request, 'admissionIndex/new-warden.html', {'form': form})
     else:
         form = WardenAdmissionForm()
-        return render(request, 'new_warden.html', {'form': form})
+        return render(request, 'admissionIndex/new-warden.html', {'form': form})
     
 def payment_successful(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -397,11 +388,11 @@ def payment_successful(request):
         user_payment.save()
         Payment.objects.create(passbook = student.passbook, fulfilled = Decimal(session.amount_total)/100)
         
-    return render(request, 'payment_successful.html', {'customer': customer})
+    return render(request, 'studentIndex/payment-successful.html', {'customer': customer})
 
 def payment_cancelled(request):
 	stripe.api_key = settings.STRIPE_SECRET_KEY
-	return render(request, 'payment_cancelled.html')
+	return render(request, 'studentIndex/payment-cancelled.html')
 
 @csrf_exempt
 def stripe_webhook(request):
@@ -440,7 +431,7 @@ def wardenIndex(request):
     maxOccupancy = hall.getMaxOccupancy()
     
     context = {'hall': hall, 'currentOccupancy': currentOccupancy, 'maxOccupancy': maxOccupancy}
-    return render(request, 'index-warden.html', context)
+    return render(request, 'wardenIndex/index-warden.html', context)
 
 @login_required(login_url = "main-login")
 def calculate_student_fees(request):
@@ -461,7 +452,7 @@ def calculate_student_fees(request):
         'amenityFees': amenityFees,
         'totalFees': totalFees,
     }
-    return render(request, 'calculate_student_fees.html', context)
+    return render(request, 'wardenIndex/calculate-student-fees.html', context)
 
 @login_required(login_url = "main-login")
 def confirm_student_fees(request, pk):
@@ -577,7 +568,7 @@ def hallpassbook(request):
         'total_pettyexpenses': total_petty,
     }
 
-    return render(request, 'hallpassbook.html', context)
+    return render(request, 'wardenIndex/hallpassbook.html', context)
 
 @login_required(login_url = "main-login")
 def chairmanIndex(request):
@@ -592,7 +583,7 @@ def chairmanIndex(request):
         maxOccupancy += hall.getMaxOccupancy()
     
     context = {'currentOccupancy': currentOccupancy, 'maxOccupancy': maxOccupancy}
-    return render(request, 'index-chairman.html', context)
+    return render(request, 'chairmanIndex/index-chairman.html', context)
 
 @login_required(login_url = "main-login")
 def generate_mess_report(request):
@@ -680,7 +671,7 @@ def w_complaints(request):
         return redirect("index")
     complaints = request.user.warden.hall.complaint_register.r_complaints.all()
     context = {'complaints': complaints}
-    return render(request, "w-complaints.html", context)
+    return render(request, "wardenIndex/warden-complaints.html", context)
 
 @login_required(login_url = "main-login")
 def w_resolvecomplaints(request, pk):
@@ -695,7 +686,7 @@ def w_resolvecomplaints(request, pk):
             complaint.save()
             return redirect('w_complaints-index')
         else:           
-            return render (request, "w-resolvecomplaints.html", {'form':form, 'complaint':complaint})
+            return render (request, "wardenIndex/warden-resolvecomplaints.html", {'form':form, 'complaint':complaint})
     else:
         form = ATREntryForm(complaint)
-        return render (request, "w-resolvecomplaints.html", {'form':form, 'complaint':complaint})
+        return render (request, "wardenIndex/warden-resolvecomplaints.html", {'form':form, 'complaint':complaint})

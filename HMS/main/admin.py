@@ -3,8 +3,7 @@ from .models import Person, Student, Hall, BoarderRoom, MessAccount, MessManager
 # Register your models here.
 
 from django.contrib.auth.admin import UserAdmin
-from django.shortcuts import redirect
-from django.contrib.admin import AdminSite, ModelAdmin
+from django.contrib.admin import ModelAdmin
 from .forms import PersonCreationForm, PersonChangeForm, StudentCreationForm, StudentChangeForm, WardenCreationForm
 
 class PersonAdmin(UserAdmin):
