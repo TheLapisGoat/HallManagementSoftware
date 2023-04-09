@@ -323,7 +323,9 @@ class ATREntryForm(forms.ModelForm):
         fields = ['title', 'details', 'date','complaint']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
+            'complaint': forms.HiddenInput(),
         }
+
     def __init__(self, complaint, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["complaint"].initial = complaint
