@@ -391,9 +391,11 @@ def payment_successful(request):
     session = stripe.checkout.Session.retrieve(checkout_session_id)
     customer = stripe.Customer.retrieve(session.customer)
     student = request.user.student
-    Payment.objects.create(passbook = student.passbook, fulfilled = Decimal(session.amount_total)/100)
-    user_payment = UserPayment.objects.create(student=student, stripe_checkout_id = checkout_session_id, payment_bool=True)
-    user_payment.save()
+    if not UserPayment.objects.filter(student=student, stripe_checkout_id = checkout_session_id, payment_bool=True):
+        user_payment = UserPayment.objects.create(student=student, stripe_checkout_id = checkout_session_id, payment_bool=True)
+        user_payment.save()
+        Payment.objects.create(passbook = student.passbook, fulfilled = Decimal(session.amount_total)/100)
+        
     return render(request, 'payment_successful.html', {'customer': customer})
 
 def payment_cancelled(request):
@@ -496,7 +498,7 @@ def generate_monthly_salary(request):
     for employee in employees:
         salary = employee.salary
         total_salary = (days_in_month - employee.leaves.filter(date__month = now.month).count()) * salary
-        salaryobject = SalaryExpense.objects.get(name = employee.name, job = employee.job, passbook = hall.passbook)
+        salaryobject = SalaryExpense.objects.filter(name = employee.name, job = employee.job, passbook = hall.passbook)
         if salaryobject:
             salaryobject.demand = Decimal(total_salary)
         else:
