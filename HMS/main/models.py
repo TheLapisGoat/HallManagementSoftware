@@ -183,17 +183,10 @@ class Complaint(models.Model):
     description = models.TextField()
     date = models.DateField()
     nameagainst = models.CharField(max_length = 100)
-    status = models.CharField(max_length = 100, default = "Pending")    
+    status = models.CharField(max_length = 100, default = "Pending")
+       
     #image = models.ImageField()
-
-class ATR(models.Model):
-    name = models.CharField(max_length = 100)
-    details = models.TextField()
-    complaint = models.OneToOneField(Complaint, on_delete = models.CASCADE, related_name = "ATR", blank = False, primary_key = True)
-
-    def change_status(self, status):
-        self.status = status
-        self.save()             
+          
 
 class HallPassbook(models.Model):
     hall = models.OneToOneField(Hall, on_delete = models.CASCADE, related_name = "passbook", blank = False, primary_key = True, unique = True)

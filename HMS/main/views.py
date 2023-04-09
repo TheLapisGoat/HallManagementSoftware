@@ -651,28 +651,17 @@ def w_complaints(request):
 @login_required(login_url = "main-login")
 def w_resolvecomplaints(request, pk):
     if request.user.role != "warden":
-        return redirect("index")
+        return redirect("index")    
     complaint = get_object_or_404(Complaint, pk = pk)
-    return render (request, "w-resolvecomplaints.html", {'complaint':complaint})
-    
-    
-       
-    # if request.method == 'POST':
-    #     # form = ComplaintResolveForm(request.POST)
-    #     context = {'form': form, 'complaints': complaints}
-    #     if form.is_valid():
-    #         complaintid = int(form.cleaned_data['id'])
-    #         complaint = Complaint.objects.filter(pk=complaintid)
-    #         if complaint != None and complaintid != 0: #and complaint.student.hall==request.user.warden.hall.name:
-    #             # request.session['param1'] = complaint
-    #             # url = reverse('resolvecomplaints', args=[obj.title foResolvelvecomplaints.html",{'complaint':complaint}) #{'complaint':complaint}
-    #             return redirect (reverse('resolvecomplaints', complaintid))
-    #         else:
-    #             return render(request, 'w-complaints.html', context)                         
-    #     else:
-    #         context = {'form': form, 'complaints': complaints}
-    #         return render(request, "w-complaints.html", context)
-    # else:
-    #     form = ComplaintResolveForm()
-    #     context = {'form': form,'complaints': complaints}
-    #     return render(request, 'w-complaints.html', context)
+    if request.method == "POST":
+        form = ATREntryForm(complaint, request.POST)
+        if form.is_valid():            
+            atr = form.save()
+            complaint.status = 'resolved'
+            complaint.save()
+            return redirect('w_complaints-index')
+        else:           
+            return render (request, "w-resolvecomplaints.html", {'form':form, 'complaint':complaint})
+    else:
+        form = ATREntryForm(complaint)
+        return render (request, "w-resolvecomplaints.html", {'form':form, 'complaint':complaint})
