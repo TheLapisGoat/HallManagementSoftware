@@ -66,7 +66,7 @@ class BoarderRoomAdmin(ModelAdmin):
         return obj.hall.name
     name.short_description = "Hall Name"
     
-    list_display = ('name', 'roomNumber', 'rent', 'currentOccupancy', 'maxOccupancy', 'newstatus')
+    list_display = ('roomNumber', 'name', 'rent', 'currentOccupancy', 'maxOccupancy', 'newstatus')
 
 class AmenityRoomAdmin(ModelAdmin):
     model = AmenityRoom
