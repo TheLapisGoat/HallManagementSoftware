@@ -82,6 +82,10 @@ class WardenAdmin(ModelAdmin):
     add_form = WardenCreationForm
     list_display = ('person', 'hall')
     
+class ATRAdmin(ModelAdmin):
+    model = ATR
+    list_display = ('title', 'complaint', 'details', 'date' )
+    
 class HallAdmin(ModelAdmin):
     model = Hall
     inlines = [BoarderRoomInLine,AmenityRoomInLine]
@@ -114,6 +118,6 @@ admin.site.register(UserPayment)
 admin.site.register(HallPassbook)
 admin.site.register(PettyExpense)
 admin.site.register(SalaryExpense)
-admin.site.register(ATR)
+admin.site.register(ATR,ATRAdmin)
 
 admin.site.site_header = 'Hall Management System Administration'

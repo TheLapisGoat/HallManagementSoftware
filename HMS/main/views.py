@@ -602,8 +602,9 @@ def generate_mess_report(request):
         students = manager.hall.students.all()
         due = 0
         for student in students:
-            mess_dues = student.passbook.dues.filter(type = 'mess', timestamp__month = current_month).aggregate(total = Sum('demand'))['total']     
-            due += mess_dues   
+            mess_dues = student.passbook.dues.filter(type = 'mess', timestamp__month = current_month).aggregate(total = Sum('demand'))['total']
+            if mess_dues is not None:   
+                due += mess_dues   
         rows.append([manager.person.first_name, manager.hall.name, round(due, 2), ''])
     
     response = HttpResponse(content_type='application/pdf')
