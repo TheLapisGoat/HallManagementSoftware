@@ -71,16 +71,19 @@ class BoarderRoomAdmin(ModelAdmin):
 class AmenityRoomAdmin(ModelAdmin):
     model = AmenityRoom
     
-    def name(self, obj):
+    def hall(self, obj):
         return obj.hall.name
-    name.short_description = "Hall Name"
     
-    list_display = ('name', 'roomNumber', 'rent',)  
+    list_display = ('name', 'hall', 'roomNumber', 'rent',)  
 
 class WardenAdmin(ModelAdmin):
     model = Warden
     add_form = WardenCreationForm
-    list_display = ('person', 'hall')
+    
+    def name(self, obj):
+        return obj.person.get_full_name()
+    
+    list_display = ('name', 'hall')
     
 class ATRAdmin(ModelAdmin):
     model = ATR
@@ -97,27 +100,109 @@ class HallAdmin(ModelAdmin):
         return obj.getMaxOccupancy()
     
     list_display = ('name', 'total_boarderrooms', 'total_amenityrooms', 'current_total_occupancy', 'max_total_occupancy')
-     
+    
+class DueAdmin(ModelAdmin):
+    model = Due
+    
+    def passbook(self, obj):
+        return str(obj.passbook)
+    
+    list_display = ('demand', 'passbook', 'type', 'timestamp')
+    
+class HallClerkAdmin(ModelAdmin):
+    model = HallClerk
+    
+    def name(self, obj):
+        return obj.person.get_full_name()
+    
+    list_display = ('name', 'hall')
+    
+class HallEmployeeLeaveAdmin(ModelAdmin):
+    model = HallEmployeeLeave
+    
+    def employee(self, obj):
+        return obj.hallemployee.name
+    employee.short_description = "Hall Employee Name"
+    
+    def hall(self, obj):
+        return obj.hallemployee.hall.name
+    
+    list_display = ('employee', 'hall', 'date')
+    
+class HallEmployeeAdmin(ModelAdmin):
+    model = HallEmployee
+    
+    def daily_salary(self, obj):
+        return obj.salary
+    
+    list_display = ('name', 'hall', 'job', 'daily_salary')
+    
+class MessAccountAdmin(ModelAdmin):
+    model = MessAccount
+    
+    def hall(self, obj):
+        return obj.student.hall.name
+    
+    def name(self, obj):
+        return obj.student.person.get_full_name()
+    name.short_description = "Student Name"
         
+    list_display = ("name", 'hall', 'due')
+    
+class MessManagerAdmin(ModelAdmin):
+    model = MessManager
+    
+    def name(self, obj):
+        return obj.person.get_full_name()
+    
+    list_display = ('name', 'hall')
+    
+class PassbookAdmin(ModelAdmin):
+    model = Passbook
+    
+    def rollNumber(self, obj):
+        return obj.student.rollNumber
+    
+    def name(self, obj):
+        return obj.student.person.get_full_name()
+    
+    list_display = ('rollNumber', 'name',)
+
+class PettyExpenseAdmin(ModelAdmin):
+    model = PettyExpense
+    
+    def hall(self, obj):
+        return obj.passbook.hall.name
+    
+    list_display = ('description', 'hall', 'demand', 'timestamp')
+    
+class SalaryExpenseAdmin(ModelAdmin):
+    model = SalaryExpense
+    
+    def hall(self, obj):
+        return obj.passbook.hall.name
+    
+    list_display = ('name', 'job', 'hall', 'demand', 'timestamp')
+    
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Hall, HallAdmin)
 admin.site.register(BoarderRoom, BoarderRoomAdmin)
 admin.site.register(AmenityRoom, AmenityRoomAdmin)
-admin.site.register(MessAccount)
-admin.site.register(Passbook)
-admin.site.register(Due)
-admin.site.register(MessManager)
+admin.site.register(MessAccount, MessAccountAdmin)
+admin.site.register(Passbook, PassbookAdmin)
+admin.site.register(Due, DueAdmin)
+admin.site.register(MessManager, MessManagerAdmin)
 admin.site.register(Complaint)
 admin.site.register(ComplaintRegister)
 admin.site.register(Warden, WardenAdmin)
-admin.site.register(HallClerk)
-admin.site.register(HallEmployee)
-admin.site.register(HallEmployeeLeave)
+admin.site.register(HallClerk, HallClerkAdmin)
+admin.site.register(HallEmployee, HallEmployeeAdmin)
+admin.site.register(HallEmployeeLeave, HallEmployeeLeaveAdmin)
 admin.site.register(UserPayment)
 admin.site.register(HallPassbook)
-admin.site.register(PettyExpense)
-admin.site.register(SalaryExpense)
 admin.site.register(ATR,ATRAdmin)
+admin.site.register(PettyExpense, PettyExpenseAdmin)
+admin.site.register(SalaryExpense, SalaryExpenseAdmin)
 
 admin.site.site_header = 'Hall Management System Administration'

@@ -61,7 +61,7 @@ class HallClerk(models.Model):
             super(HallClerk, self).save(*args, **kwargs)
             
     def __str__(self):
-        return self.person.first_name
+        return self.person.get_full_name()
 
 class HallEmployee(models.Model):
     name = models.CharField("Name", max_length = 100, blank = False)
@@ -70,11 +70,14 @@ class HallEmployee(models.Model):
     salary = models.DecimalField("Salary", default = 0, blank = False, max_digits = 8, decimal_places = 2)
     
     def __str__(self):
-        return self.name
+        return self.name + " - " + self.hall.name
     
 class HallEmployeeLeave(models.Model):
     hallemployee = models.ForeignKey(HallEmployee, on_delete = models.CASCADE, related_name = "leaves", blank = False)
     date = models.DateField("Date", blank = False)
+    
+    def __str__(self):
+        return self.hallemployee.hall.name + " - " + self.hallemployee.name + " - " + str(self.date)
 
 class MessManager(models.Model):
     person = models.OneToOneField(Person, on_delete = models.CASCADE, related_name = "mess_manager", primary_key = True, blank = False, unique = True)
@@ -131,7 +134,7 @@ class Warden(models.Model):
     hall = models.OneToOneField(Hall, on_delete = models.PROTECT, related_name = "warden", blank = False, unique = True)
     
     def __str__(self):
-        return self.person.first_name + " " + self.person.last_name + " - " + self.hall.name
+        return self.person.get_full_name() + " - " + self.hall.name
 
 class MessAccount(models.Model):
     student = models.OneToOneField(Student, on_delete = models.CASCADE, related_name = "messAccount", blank = False, primary_key = True, unique = True)
@@ -190,6 +193,9 @@ class Complaint(models.Model):
 
 class HallPassbook(models.Model):
     hall = models.OneToOneField(Hall, on_delete = models.CASCADE, related_name = "passbook", blank = False, primary_key = True, unique = True)
+    
+    def __str__(self):
+        return self.hall.name + " Passbook"
 
 class Expense(models.Model):
     
@@ -202,10 +208,16 @@ class PettyExpense(Expense):
     description = models.CharField("Description", max_length = 100, blank = False)
     passbook = models.ForeignKey(HallPassbook, on_delete = models.CASCADE, related_name = "pettyexpenses", blank = False)
     
+    def __str__(self):
+        return "Petty Expense: " + self.description + " - " + self.passbook.hall.name
+    
 class SalaryExpense(Expense):
     name = models.CharField("Name", max_length = 100, blank = False)
     job = models.CharField("Job", max_length = 100, blank = False)
     passbook = models.ForeignKey(HallPassbook, on_delete = models.CASCADE, related_name = "salaryexpenses", blank = False)
+    
+    def __str__(self):
+        return "Salary Expense: " + self.name + " - " + self.passbook.hall.name
 
 class UserPayment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
