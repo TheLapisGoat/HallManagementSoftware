@@ -320,12 +320,11 @@ class ATREntryForm(forms.ModelForm):
     
     class Meta:
         model = ATR
-        fields = ['title', 'details', 'date']
+        fields = ['title', 'details', 'date','complaint']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
-        
-    def __init__(self, hall, *args, **kwargs):
+    def __init__(self, complaint, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["hall"].initial = hall
-        self.fields["hall"].disabled = True
+        self.fields["complaint"].initial = complaint
+        self.fields["complaint"].disabled = True
