@@ -17,6 +17,7 @@ body {
     font-size: 36px;
     margin-bottom: 20px;
     color: #4CAF50;
+    text-align: center;
   }
   
   /* Style the form */
@@ -53,4 +54,6 @@ body {
   input[type="submit"]:hover {
     background-color: #3e8e41;
   }
+
+  
   
