@@ -11,7 +11,7 @@ class PersonCreationForm(UserCreationForm):
 
     class Meta:
         model = Person
-        fields = ('username', 'email', 'password1', 'password2', 'address', 'telephoneNumber', 'role')
+        fields = ('username', 'email', 'password1', 'password2', 'address', 'telephoneNumber', 'role', 'photograph')
         
 class PersonChangeForm(UserChangeForm):
     address = forms.CharField(max_length=255, required=True)
@@ -20,7 +20,7 @@ class PersonChangeForm(UserChangeForm):
 
     class Meta:
         model = Person
-        fields = ('username', 'email', 'address', 'telephoneNumber', 'role')
+        fields = ('username', 'email', 'address', 'telephoneNumber', 'role', 'photograph')
         
 class StudentCreationForm(forms.ModelForm):
     
@@ -32,6 +32,7 @@ class StudentCreationForm(forms.ModelForm):
     email = forms.EmailField(required = True)
     address = forms.CharField(widget = forms.Textarea, required = True)
     telephoneNumber = PhoneNumberField(required = True)
+    photograph = forms.ImageField(required = False)
     
     class Meta:
         model = Student
@@ -46,6 +47,7 @@ class StudentCreationForm(forms.ModelForm):
                 email = self.cleaned_data['email'],
                 address = self.cleaned_data['address'],
                 telephoneNumber = self.cleaned_data['telephoneNumber'],
+                photograph = self.cleaned_data['photograph'],
             )
         student = super().save(commit=False)
         student.person = person
@@ -61,6 +63,7 @@ class StudentChangeForm(forms.ModelForm):
     email = forms.EmailField()
     address = forms.CharField(widget = forms.Textarea)
     telephoneNumber = PhoneNumberField()
+    photograph = forms.ImageField(required = False)
     
     class Meta:
         model = Student
@@ -79,6 +82,7 @@ class StudentChangeForm(forms.ModelForm):
             self.fields['room'].initial = self.instance.room
             self.fields['hall'].initial = self.instance.hall
             self.fields['rollNumber'].initial = self.instance.rollNumber
+            self.fields['photograph'].initial = person.photograph
     
     def save(self, commit=True):
         student = super().save(commit=False)
@@ -89,6 +93,7 @@ class StudentChangeForm(forms.ModelForm):
         person.last_name = self.cleaned_data['last_name']
         person.email = self.cleaned_data['email']
         person.telephoneNumber = self.cleaned_data['telephoneNumber']
+        person.photograph = self.cleaned_data['photograph']
         person.save()
         student.room = self.cleaned_data['room']
         student.hall = self.cleaned_data['hall']
@@ -107,6 +112,7 @@ class StudentAdmissionForm(forms.Form):
     email = forms.EmailField(required = True)
     address = forms.CharField(widget = forms.Textarea, required = True)
     telephoneNumber = PhoneNumberField(required = True)
+    photograph = forms.ImageField(required = False)
     
     def clean(self):
         cleaned_data = super(forms.Form, self).clean()
@@ -179,6 +185,7 @@ class WardenAdmissionForm(forms.Form):
     address = forms.CharField(widget = forms.Textarea, required = True)
     telephoneNumber = PhoneNumberField(required = True)
     hall = forms.ModelChoiceField(queryset = Hall.objects.all(), required = True)
+    photograph = forms.ImageField(required = False)
     
     def clean(self):
         cleaned_data = super(forms.Form, self).clean()
@@ -195,6 +202,7 @@ class WardenChangeForm(forms.ModelForm):
     email = forms.EmailField()
     address = forms.CharField(widget = forms.Textarea)
     telephoneNumber = PhoneNumberField()
+    photograph = forms.ImageField(required = False)
     
     class Meta:
         model = Warden
@@ -211,6 +219,7 @@ class WardenChangeForm(forms.ModelForm):
             self.fields['address'].initial = person.address
             self.fields['telephoneNumber'].initial = person.telephoneNumber
             self.fields['hall'].initial = self.instance.hall
+            self.fields['photograph'].initial = person.photograph
     
     def save(self, commit=True):
         warden = super().save(commit=False)
@@ -221,6 +230,7 @@ class WardenChangeForm(forms.ModelForm):
         person.last_name = self.cleaned_data['last_name']
         person.email = self.cleaned_data['email']
         person.telephoneNumber = self.cleaned_data['telephoneNumber']
+        person.photograph = self.cleaned_data['photograph']
         person.save()
         warden.hall = self.cleaned_data['hall']
         if commit:
@@ -238,6 +248,7 @@ class WardenCreationForm(forms.ModelForm):
     address = forms.CharField(widget = forms.Textarea, required = True)
     telephoneNumber = PhoneNumberField(required = True)
     hall = forms.ModelChoiceField(queryset = Hall.objects.all(), required = True)
+    photograph = forms.ImageField(required = False)
     
     class Meta:
         model = Warden
@@ -252,6 +263,7 @@ class WardenCreationForm(forms.ModelForm):
                 email = self.cleaned_data['email'],
                 address = self.cleaned_data['address'],
                 telephoneNumber = self.cleaned_data['telephoneNumber'],
+                photograph = self.cleaned_data['photograph'],
             )
         warden = super().save(commit=False)
         warden.person = person

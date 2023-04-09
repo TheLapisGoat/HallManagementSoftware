@@ -15,14 +15,14 @@ class PersonAdmin(UserAdmin):
     list_filter = ('is_staff', 'role')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'email', 'address', 'telephoneNumber', 'role')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'email', 'address', 'photograph', 'telephoneNumber', 'role')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2', 'address', 'telephoneNumber', 'role', 'is_staff', 'is_superuser', 'groups')}
+            'fields': ('username', 'email', 'password1', 'password2', 'address', 'telephoneNumber', 'photograph', 'role', 'is_staff', 'is_superuser', 'groups')}
         ),
     )
     search_fields = ('username', 'email', 'first_name', 'last_name')

@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from .models import Student, MessAccount, Hall, BoarderRoom, Passbook, AmenityRoom, ComplaintRegister, HallPassbook
 
@@ -48,3 +48,15 @@ def update_current_occupancy(sender, instance, created, **kwargs):
 def update_sender_room_occupancy(sender, instance, **kwargs):
     if instance.room is not None:
         instance.room.save()
+        
+@receiver(post_delete, sender = Student)
+def update_sender_room_occupancy(sender, instance, **kwargs):
+    rooms = BoarderRoom.objects.all()
+    for room in rooms:
+        room.save()
+        
+@receiver(post_delete, sender = BoarderRoom)
+def update_sender_room_occupancy(sender, instance, **kwargs):
+    halls = Hall.objects.all()
+    for hall in halls:
+        hall.save()

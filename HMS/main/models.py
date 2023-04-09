@@ -20,7 +20,6 @@ class Person(AbstractUser, PermissionsMixin):
         ('mess_manager', 'Mess Manager'),
         ('admin', 'Administrator'),
         ('admission', 'Admission Unit'),
-        ('hall_clerk', 'Hall Clerk')
     ]
     
     role = models.CharField("Role", max_length=40, choices=ROLES, default='student', blank = False)
@@ -31,7 +30,7 @@ class Person(AbstractUser, PermissionsMixin):
         
     address = models.TextField("Address", blank=False)
     telephoneNumber = PhoneNumberField("Telephone Number", blank=False)
-    #photograph = models.ImageField("Photo")
+    photograph = models.ImageField("Photo", blank = True)
 
     REQUIRED_FIELDS = ["email", "address", "telephoneNumber", "role", "first_name", "last_name"]
     
@@ -149,15 +148,6 @@ class ComplaintRegister(models.Model):
         
     def __str__(self):
         return self.hall.name
-        
-    # def save(self, *args, **kwargs):
-    #     if self.pk is None:
-    #         super(ComplaintRegister, self).save(*args, **kwargs)
-    #         self.save()
-    #         self.hall.save()
-    #     else:
-    #         super(ComplaintRegister, self).save(*args, **kwargs)
-    #         self.hall.save()
             
 class Complaint(models.Model):
     complaintregister = models.ForeignKey(ComplaintRegister, on_delete = models.CASCADE, related_name = "r_complaints")
@@ -196,20 +186,6 @@ class SalaryExpense(Expense):
     name = models.CharField("Name", max_length = 100, blank = False)
     job = models.CharField("Job", max_length = 100, blank = False)
     passbook = models.ForeignKey(HallPassbook, on_delete = models.CASCADE, related_name = "salaryexpenses", blank = False)
-        
-
-
-# class Allocation(models.Model):     # change allocation-hallbudget relation to aggregation
-#     hall_budget= models.ForeignKey(HallBudget, on_delete = models.CASCADE, related_name = "allocations")
-#     name = models.CharField(max_length = 100)
-#     allocated_grant = models.FloatField()
-
-#     def __str__(self):
-#         return self.name
-    
-#     def change_value(self, value):
-#         self.allocated_grant = value
-#         self.save()
 
 class UserPayment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)

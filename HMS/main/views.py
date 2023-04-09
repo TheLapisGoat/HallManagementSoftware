@@ -20,7 +20,6 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet
 import calendar
 
-
 def getFreeRoom():
     halls = Hall.objects.all()
     for hall in halls:
@@ -166,6 +165,7 @@ def newAdmission(request):
                 email = form.cleaned_data['email'],
                 address = form.cleaned_data['address'],
                 telephoneNumber = form.cleaned_data['telephoneNumber'],
+                photograph = form.cleaned_data['photograph'],
             )
             
             student = Student.objects.create(
@@ -313,7 +313,7 @@ def loginUser(request):
             login(request, user)
             return redirect("index")
         else:
-            messages.success(request, "Skill Issue")
+            messages.success(request, "Incorrect Username or Password")
             return redirect("main-login")
     else:
             form = AuthenticationForm(request.POST)
@@ -368,7 +368,8 @@ def newWarden(request):
                 last_name=form.cleaned_data['last_name'],
                 email = form.cleaned_data['email'],
                 address = form.cleaned_data['address'],
-                telephoneNumber = form.cleaned_data['telephoneNumber'],                
+                telephoneNumber = form.cleaned_data['telephoneNumber'],  
+                photograph = form.cleaned_data['photograph'],              
             )
             
             warden = Warden.objects.create(
