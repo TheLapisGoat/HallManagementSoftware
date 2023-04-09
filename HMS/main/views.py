@@ -657,24 +657,18 @@ def get_ATR_report(request, pk):
 
     pdf.setFont('Helvetica', 12)
 
-    # Write the title and details of the ATR
     pdf.drawString(100, 750, 'Title: {}'.format(atr.title))
     pdf.drawString(100, 730, 'Details: {}'.format(atr.details))
 
-    # Draw a line
     pdf.line(50, 700, 550, 700)
 
-    # Write the complaint details
     pdf.drawString(100, 680, 'Complaint: {}'.format(atr.complaint.title))
     pdf.drawString(100, 660, 'Date: {}'.format(atr.date))
 
-    # Draw a line
     pdf.line(50, 630, 550, 630)
 
-    # Write the signature line
     pdf.drawString(100, 600, 'Signature: ___________________')
 
-    # Close the PDF object cleanly, and we're done.
     pdf.showPage()
     pdf.save()
 

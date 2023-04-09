@@ -229,8 +229,3 @@ class ATR(models.Model):
     details = models.TextField()
     complaint = models.OneToOneField(Complaint, on_delete = models.CASCADE, related_name = "ATR", blank = False, primary_key = True)
     date = models.DateField()
-
-@receiver(post_save, sender=Student)
-def create_student_payment(sender, instance, created, **kwargs):
-    if created:
-        UserPayment.objects.create(student=instance)
