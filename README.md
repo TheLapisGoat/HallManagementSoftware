@@ -8,7 +8,7 @@ Created a multi-user hall management system including features such as:
  - The HMC Chairman can view the total occupancy of halls and generate a monthly mess report for mess managers.
  - Students can view their passbooks, pay fees, and file complaints.
 ## Installation and Setup
-1. Install all dependencies using `pip install -r requirements.txt.`
+1. Install all dependencies using `pip install -r requirements.txt`.
 2. After installing dependencies, run the following commands:
 	- `python manage.py makemigrations`
 	 - `python manage.py migrate`
