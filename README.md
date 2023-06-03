@@ -1,5 +1,6 @@
 # Hall Management System
 (CS29202) Software Engineering Lab Project
+
 Created a multi-user hall management system including features such as:
  - Admitting new student accounts into the system, along with the automated allocation of rooms.
  - Allowing mess managers to update mess dues in student accounts.
