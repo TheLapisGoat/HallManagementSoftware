@@ -1,7 +1,7 @@
-# Hall Management System
+# Hall Management Software
 (CS29202) Software Engineering Lab Project
 
-Created a multi-user hall management system including features such as:
+Created a multi-user hall management software including features such as:
  - Admitting new student accounts into the system, along with the automated allocation of rooms.
  - Allowing mess managers to update mess dues in student accounts.
  - Wardens can view hall occupancy, generate monthly salary reports of mess workers, and view hall accounts. They can also view complaints and file ATRs (Action Taken Reports) addressing them.
